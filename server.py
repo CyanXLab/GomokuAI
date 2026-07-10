@@ -2,7 +2,8 @@
 RapFi 在线五子棋 Flask 后端
 - pve/pvp 模式
 - 游戏结束后可从历史位置继续
-- 无回合限制，玩家可随时下子
+- 无回合限制
+- 评估值历史
 """
 import os
 import sys
@@ -28,7 +29,6 @@ app = Flask(__name__, static_folder="static", static_url_path="/static")
 
 @app.after_request
 def add_no_cache_headers(resp):
-    """防止浏览器缓存静态文件"""
     if request.path.startswith("/static/") or request.path == "/" or request.path.endswith(".html"):
         resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
         resp.headers["Pragma"] = "no-cache"
@@ -64,6 +64,66 @@ def _check_win(state):
     return _check_win_from_board(state.get_board(), last["x"], last["y"], last["color"], state.rule)
 
 
+def _get_eval_from_engine(state, moves_list):
+    """从引擎获取当前局面的评估值。返回 (black_eval, white_eval)。
+    使用 YXBEVALUATE 命令或简单的局面评估。"""
+    try:
+        engine = get_engine()
+        # RapFi 没有直接的评估命令，我们用 BOARD + 短时间搜索来获取评估
+        # 这里用一个简单方法：发送局面，看引擎返回的 Eval 值
+        # 但这会触发完整搜索，太慢。
+        # 替代方案：用局面统计（棋型数量）作为简单评估
+        board = state.get_board()
+        size = state.board_size
+        black_score = 0
+        white_score = 0
+        # 简单评估：计算每方的棋型分数
+        # 五连=100000, 活四=10000, 冲四=1000, 活三=100, 眠三=10, 活二=1
+        for x in range(size):
+            for y in range(size):
+                if board[x][y] == 0: continue
+                color = board[x][y]
+                score = _count_patterns(board, x, y, color, size)
+                if color == 1:
+                    black_score += score
+                else:
+                    white_score += score
+        # 归一化到 -1000 ~ 1000
+        diff = black_score - white_score
+        eval_val = max(-1000, min(1000, diff))
+        return eval_val, -eval_val
+    except Exception as e:
+        print(f"[EVAL] 错误: {e}", flush=True)
+        return 0, 0
+
+
+def _count_patterns(board, x, y, color, size):
+    """统计某位置的棋型分数"""
+    total = 0
+    for dx, dy in [(1,0),(0,1),(1,1),(1,-1)]:
+        count = 1
+        blocked = 0
+        nx, ny = x+dx, y+dy
+        while 0 <= nx < size and 0 <= ny < size and board[nx][ny] == color:
+            count += 1; nx += dx; ny += dy
+        if not (0 <= nx < size and 0 <= ny < size) or board[nx][ny] != 0:
+            blocked += 1
+        nx, ny = x-dx, y-dy
+        while 0 <= nx < size and 0 <= ny < size and board[nx][ny] == color:
+            count += 1; nx -= dx; ny -= dy
+        if not (0 <= nx < size and 0 <= ny < size) or board[nx][ny] != 0:
+            blocked += 1
+        # 计分
+        if count >= 5: total += 100000
+        elif count == 4 and blocked == 0: total += 10000
+        elif count == 4: total += 1000
+        elif count == 3 and blocked == 0: total += 100
+        elif count == 3: total += 10
+        elif count == 2 and blocked == 0: total += 5
+        elif count == 2: total += 1
+    return total
+
+
 def do_new_game(rule, board_size, player_color, game_mode, timeout_turn, thread_num, max_memory):
     state = get_state()
     engine = get_engine()
@@ -78,7 +138,7 @@ def do_new_game(rule, board_size, player_color, game_mode, timeout_turn, thread_
     engine.set_board_size(board_size)
 
     state.reset(rule=rule, board_size=board_size, player_color=player_color, game_mode=game_mode)
-    print(f"[NEW_GAME] 状态已重置, thinking={state.thinking}, game_over={state.game_over}", flush=True)
+    print(f"[NEW_GAME] 状态已重置, thinking={state.thinking}", flush=True)
 
     if game_mode == "pve" and player_color == 2:
         print(f"[NEW_GAME] pve 玩家执白, AI 先手", flush=True)
@@ -88,37 +148,38 @@ def do_new_game(rule, board_size, player_color, game_mode, timeout_turn, thread_
             print(f"[NEW_GAME] AI 首手: ({move[0]},{move[1]})", flush=True)
             state.moves.append({"x": move[0], "y": move[1], "color": 1, "by": "ai"})
             state.view_index = len(state.moves)
+            # 记录评估
+            b_eval, w_eval = _get_eval_from_engine(state, state.get_visible_moves())
+            state.add_eval(1, b_eval, w_eval)
         except Exception as e:
             state.last_error = str(e)
             print(f"[NEW_GAME] AI 错误: {e}", flush=True)
             traceback.print_exc()
         finally:
             state.thinking = False
-            print(f"[NEW_GAME] AI 首手完成, thinking=False", flush=True)
 
     return _ok(state.to_dict())
 
 
 def do_player_move(x, y):
-    """玩家下子。pvp 模式轮流下，pve 模式 AI 自动应招。无回合限制。"""
+    """玩家下子。pve 模式 AI 自动应招。"""
     state = get_state()
     engine = get_engine()
 
-    print(f"[MOVE] 玩家请求下子 ({x},{y}), mode={state.game_mode}, thinking={state.thinking}, game_over={state.game_over}", flush=True)
+    print(f"[MOVE] 玩家请求 ({x},{y}), mode={state.game_mode}, thinking={state.thinking}", flush=True)
 
     with state._lock:
         if state.thinking:
             return _err("引擎思考中，请稍候")
 
-        # 在历史位置或游戏结束时，自动截断后续
         if state.view_index < len(state.moves) or state.game_over:
-            print(f"[MOVE] 截断历史: {len(state.moves)} -> {state.view_index}", flush=True)
+            print(f"[MOVE] 截断: {len(state.moves)} -> {state.view_index}", flush=True)
             state.moves = state.moves[: state.view_index]
             state.game_over = False
             state.winner = 0
 
         current_color = state.get_current_color()
-        print(f"[MOVE] 当前颜色: {current_color}", flush=True)
+        print(f"[MOVE] 玩家颜色: {current_color}", flush=True)
 
         board = state.get_board()
         if not (0 <= x < state.board_size and 0 <= y < state.board_size):
@@ -128,29 +189,35 @@ def do_player_move(x, y):
 
         state.moves.append({"x": x, "y": y, "color": current_color, "by": "human"})
         state.view_index = len(state.moves)
-        print(f"[MOVE] 已下子, 总步数={len(state.moves)}", flush=True)
+        print(f"[MOVE] 已下子, 步数={len(state.moves)}", flush=True)
+
+        # 记录评估
+        b_eval, w_eval = _get_eval_from_engine(state, state.get_visible_moves())
+        state.add_eval(len(state.moves), b_eval, w_eval)
 
         if _check_win(state):
             state.game_over = True
             state.winner = current_color
-            state.thinking = False  # 确保重置
+            state.thinking = False
             print(f"[MOVE] 游戏结束! 胜者={current_color}", flush=True)
             return _ok(state.to_dict())
 
     # pve 模式：AI 自动应招
     if state.game_mode == "pve":
-        print(f"[MOVE] pve 模式, AI 开始应招", flush=True)
+        ai_color = 2 if state.player_color == 1 else 1
+        print(f"[MOVE] pve AI 应招, ai_color={ai_color}", flush=True)
         state.thinking = True
         try:
             engine.set_rule(state.rule)
             visible = [(m["x"], m["y"], m["color"]) for m in state.get_visible_moves()]
-            ai_color = 2 if state.player_color == 1 else 1
-            print(f"[MOVE] AI 思考中, ai_color={ai_color}, 可见步数={len(visible)}", flush=True)
             move = engine.think(visible, engine_color=ai_color)
             print(f"[MOVE] AI 返回: ({move[0]},{move[1]})", flush=True)
             with state._lock:
                 state.moves.append({"x": move[0], "y": move[1], "color": ai_color, "by": "ai"})
                 state.view_index = len(state.moves)
+                # 记录评估
+                b_eval, w_eval = _get_eval_from_engine(state, state.get_visible_moves())
+                state.add_eval(len(state.moves), b_eval, w_eval)
                 if _check_win(state):
                     state.game_over = True
                     state.winner = ai_color
@@ -161,43 +228,43 @@ def do_player_move(x, y):
             traceback.print_exc()
         finally:
             state.thinking = False
-            print(f"[MOVE] AI 思考结束, thinking=False", flush=True)
-    else:
-        print(f"[MOVE] pvp 模式, 不触发 AI", flush=True)
+            print(f"[MOVE] AI 思考结束", flush=True)
 
     return _ok(state.to_dict())
 
 
 def do_ai_move():
-    """AI 单步下子"""
+    """AI 单步下子（不触发自动应招）"""
     state = get_state()
     engine = get_engine()
 
-    print(f"[AI_MOVE] 请求, mode={state.game_mode}, thinking={state.thinking}, game_over={state.game_over}", flush=True)
+    print(f"[AI_MOVE] 请求, mode={state.game_mode}, thinking={state.thinking}", flush=True)
 
     with state._lock:
         if state.thinking:
             return _err("引擎思考中")
 
         if state.view_index < len(state.moves) or state.game_over:
-            print(f"[AI_MOVE] 截断历史: {len(state.moves)} -> {state.view_index}", flush=True)
+            print(f"[AI_MOVE] 截断: {len(state.moves)} -> {state.view_index}", flush=True)
             state.moves = state.moves[: state.view_index]
             state.game_over = False
             state.winner = 0
 
         current_color = state.get_current_color()
-        print(f"[AI_MOVE] 当前颜色: {current_color}", flush=True)
+        print(f"[AI_MOVE] AI 颜色: {current_color}", flush=True)
 
     state.thinking = True
     try:
         engine.set_rule(state.rule)
         visible = [(m["x"], m["y"], m["color"]) for m in state.get_visible_moves()]
-        print(f"[AI_MOVE] AI 思考中, 可见步数={len(visible)}", flush=True)
         move = engine.think(visible, engine_color=current_color)
         print(f"[AI_MOVE] AI 返回: ({move[0]},{move[1]})", flush=True)
         with state._lock:
             state.moves.append({"x": move[0], "y": move[1], "color": current_color, "by": "ai"})
             state.view_index = len(state.moves)
+            # 记录评估
+            b_eval, w_eval = _get_eval_from_engine(state, state.get_visible_moves())
+            state.add_eval(len(state.moves), b_eval, w_eval)
             if _check_win(state):
                 state.game_over = True
                 state.winner = current_color
@@ -208,7 +275,7 @@ def do_ai_move():
         traceback.print_exc()
     finally:
         state.thinking = False
-        print(f"[AI_MOVE] 完成, thinking=False", flush=True)
+        print(f"[AI_MOVE] 完成", flush=True)
 
     return _ok(state.to_dict())
 
@@ -359,7 +426,7 @@ def main():
         except: pass
 
     print("=" * 60, flush=True)
-    print("  RapFi 在线五子棋 (Flask)", flush=True)
+    print("  GomokuPrime (Flask)", flush=True)
     print("=" * 60, flush=True)
     try:
         from engine_manager import list_available_engines, _current_os
@@ -373,17 +440,17 @@ def main():
         success = engine.start()
         cfg = engine.get_config()
         if success:
-            print(f"\n[OK] 引擎已启动: {cfg['engine_path']}", flush=True)
+            print(f"\n[OK] 引擎: {cfg['engine_path']}", flush=True)
             print(f"     架构: {cfg['engine_arch_label']}", flush=True)
             print(f"     规则: {RULE_INFO[cfg['rule']]['name']}", flush=True)
         else:
             print(f"\n[WARN] 引擎启动失败: {cfg.get('start_error','')[:200]}", flush=True)
     except Exception as e:
-        print(f"[WARN] 引擎初始化异常: {e}", flush=True)
+        print(f"[WARN] 引擎异常: {e}", flush=True)
         traceback.print_exc()
 
-    print(f"\n[OK] 服务已启动: http://127.0.0.1:{port}/", flush=True)
-    print("    按 Ctrl+C 退出\n", flush=True)
+    print(f"\n[OK] 服务: http://127.0.0.1:{port}/", flush=True)
+    print("    Ctrl+C 退出\n", flush=True)
 
     import logging
     logging.getLogger("werkzeug").setLevel(logging.WARNING)
@@ -391,7 +458,7 @@ def main():
     try:
         app.run(host="127.0.0.1", port=port, debug=False, threaded=True)
     except KeyboardInterrupt:
-        print("\n[退出] 正在关闭引擎...", flush=True)
+        print("\n[退出] 关闭引擎...", flush=True)
         get_engine().stop()
         print("[完成]", flush=True)
 
