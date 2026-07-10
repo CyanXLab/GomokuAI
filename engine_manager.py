@@ -295,7 +295,10 @@ class RapFiEngine:
                                       text=True, bufsize=1, creationflags=creationflags)
         self._send_raw(f"INFO timeout_turn {self._timeout_turn}")
         self._send_raw(f"INFO timeout_match {self._timeout_match}")
-        self._send_raw(f"INFO max_memory {self._max_memory}")
+        # RapFi 的 max_memory 期望字节数（内部会 >> 10 转成 KB）
+        # 我们存储的是 MB，转换成字节: MB * 1024 * 1024
+        max_memory_bytes = self._max_memory * 1024 * 1024
+        self._send_raw(f"INFO max_memory {max_memory_bytes}")
         self._send_raw(f"INFO thread_num {self._thread_num}")
         self._send_raw(f"INFO rule {self._rule}")
         self._send_raw("INFO usedatabase 1")
@@ -349,7 +352,9 @@ class RapFiEngine:
         self._max_memory = int(mb)
         self._config["engine"]["max_memory_mb"] = self._max_memory
         save_config(self._config)
-        if self.started: self._send_raw(f"INFO max_memory {self._max_memory}")
+        if self.started:
+            max_memory_bytes = self._max_memory * 1024 * 1024
+            self._send_raw(f"INFO max_memory {max_memory_bytes}")
 
     def set_thread_num(self, n):
         self._thread_num = int(n)

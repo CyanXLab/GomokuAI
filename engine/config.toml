@@ -8,8 +8,10 @@ default_thread_num = 0
 message_mode = "normal"
 coord_conversion_mode = "none"
 default_candidate_range = "square3_line4"
-memory_reserved_mb = 64
-default_tt_size_kb = 262144
+# 预留内存设为 0，让 max_memory 全部用于置换表
+memory_reserved_mb = 0
+# 置换表 128MB（与 max_memory 512MB 匹配，留余量给引擎本身）
+default_tt_size_kb = 131072
 
 [model]
 binary_file = "model210901.bin"
