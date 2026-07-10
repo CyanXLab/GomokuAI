@@ -68,6 +68,8 @@ def do_new_game(rule, board_size, player_color, game_mode, timeout_turn, thread_
     state = get_state()
     engine = get_engine()
 
+    print(f"[NEW_GAME] rule={rule}, size={board_size}, color={player_color}, mode={game_mode}")
+
     if timeout_turn is not None: engine.set_timeout_turn(timeout_turn)
     if thread_num is not None: engine.set_thread_num(thread_num)
     if max_memory is not None: engine.set_max_memory(max_memory)
@@ -76,17 +78,23 @@ def do_new_game(rule, board_size, player_color, game_mode, timeout_turn, thread_
     engine.set_board_size(board_size)
 
     state.reset(rule=rule, board_size=board_size, player_color=player_color, game_mode=game_mode)
+    print(f"[NEW_GAME] 状态已重置, thinking={state.thinking}, game_over={state.game_over}")
 
     if game_mode == "pve" and player_color == 2:
+        print(f"[NEW_GAME] pve 玩家执白, AI 先手")
         state.thinking = True
         try:
             move = engine.think([], engine_color=1)
+            print(f"[NEW_GAME] AI 首手: ({move[0]},{move[1]})")
             state.moves.append({"x": move[0], "y": move[1], "color": 1, "by": "ai"})
             state.view_index = len(state.moves)
         except Exception as e:
             state.last_error = str(e)
+            print(f"[NEW_GAME] AI 错误: {e}")
+            traceback.print_exc()
         finally:
             state.thinking = False
+            print(f"[NEW_GAME] AI 首手完成, thinking=False")
 
     return _ok(state.to_dict())
 
@@ -96,16 +104,21 @@ def do_player_move(x, y):
     state = get_state()
     engine = get_engine()
 
+    print(f"[MOVE] 玩家请求下子 ({x},{y}), mode={state.game_mode}, thinking={state.thinking}, game_over={state.game_over}")
+
     with state._lock:
         if state.thinking:
             return _err("引擎思考中，请稍候")
 
+        # 在历史位置或游戏结束时，自动截断后续
         if state.view_index < len(state.moves) or state.game_over:
+            print(f"[MOVE] 截断历史: {len(state.moves)} -> {state.view_index}")
             state.moves = state.moves[: state.view_index]
             state.game_over = False
             state.winner = 0
 
         current_color = state.get_current_color()
+        print(f"[MOVE] 当前颜色: {current_color}")
 
         board = state.get_board()
         if not (0 <= x < state.board_size and 0 <= y < state.board_size):
@@ -115,30 +128,42 @@ def do_player_move(x, y):
 
         state.moves.append({"x": x, "y": y, "color": current_color, "by": "human"})
         state.view_index = len(state.moves)
+        print(f"[MOVE] 已下子, 总步数={len(state.moves)}")
 
         if _check_win(state):
             state.game_over = True
             state.winner = current_color
+            state.thinking = False  # 确保重置
+            print(f"[MOVE] 游戏结束! 胜者={current_color}")
             return _ok(state.to_dict())
 
+    # pve 模式：AI 自动应招
     if state.game_mode == "pve":
+        print(f"[MOVE] pve 模式, AI 开始应招")
         state.thinking = True
         try:
             engine.set_rule(state.rule)
             visible = [(m["x"], m["y"], m["color"]) for m in state.get_visible_moves()]
             ai_color = 2 if state.player_color == 1 else 1
+            print(f"[MOVE] AI 思考中, ai_color={ai_color}, 可见步数={len(visible)}")
             move = engine.think(visible, engine_color=ai_color)
+            print(f"[MOVE] AI 返回: ({move[0]},{move[1]})")
             with state._lock:
                 state.moves.append({"x": move[0], "y": move[1], "color": ai_color, "by": "ai"})
                 state.view_index = len(state.moves)
                 if _check_win(state):
                     state.game_over = True
                     state.winner = ai_color
+                    print(f"[MOVE] AI 获胜!")
         except Exception as e:
             state.last_error = str(e)
+            print(f"[MOVE] AI 错误: {e}")
             traceback.print_exc()
         finally:
             state.thinking = False
+            print(f"[MOVE] AI 思考结束, thinking=False")
+    else:
+        print(f"[MOVE] pvp 模式, 不触发 AI")
 
     return _ok(state.to_dict())
 
@@ -148,33 +173,42 @@ def do_ai_move():
     state = get_state()
     engine = get_engine()
 
+    print(f"[AI_MOVE] 请求, mode={state.game_mode}, thinking={state.thinking}, game_over={state.game_over}")
+
     with state._lock:
         if state.thinking:
             return _err("引擎思考中")
 
         if state.view_index < len(state.moves) or state.game_over:
+            print(f"[AI_MOVE] 截断历史: {len(state.moves)} -> {state.view_index}")
             state.moves = state.moves[: state.view_index]
             state.game_over = False
             state.winner = 0
 
         current_color = state.get_current_color()
+        print(f"[AI_MOVE] 当前颜色: {current_color}")
 
     state.thinking = True
     try:
         engine.set_rule(state.rule)
         visible = [(m["x"], m["y"], m["color"]) for m in state.get_visible_moves()]
+        print(f"[AI_MOVE] AI 思考中, 可见步数={len(visible)}")
         move = engine.think(visible, engine_color=current_color)
+        print(f"[AI_MOVE] AI 返回: ({move[0]},{move[1]})")
         with state._lock:
             state.moves.append({"x": move[0], "y": move[1], "color": current_color, "by": "ai"})
             state.view_index = len(state.moves)
             if _check_win(state):
                 state.game_over = True
                 state.winner = current_color
+                print(f"[AI_MOVE] AI 获胜!")
     except Exception as e:
         state.last_error = str(e)
+        print(f"[AI_MOVE] 错误: {e}")
         traceback.print_exc()
     finally:
         state.thinking = False
+        print(f"[AI_MOVE] 完成, thinking=False")
 
     return _ok(state.to_dict())
 

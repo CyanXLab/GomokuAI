@@ -5,7 +5,7 @@ from engine_manager import RULE_FREESTYLE, RULE_STANDARD, RULE_RENJU, RULE_NAMES
 
 class GameState:
     def __init__(self):
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()  # 可重入锁，避免 to_dict 在 lock 内调用死锁
         self.rule = RULE_FREESTYLE
         self.board_size = 15
         self.moves = []

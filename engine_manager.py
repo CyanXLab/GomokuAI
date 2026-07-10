@@ -224,7 +224,7 @@ def _try_start_engine(abs_path, engine_dir, timeout=8):
 class RapFiEngine:
     def __init__(self):
         self._proc = None
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()  # 可重入锁
         self._rule = RULE_FREESTYLE
         self._board_size = 15
         self._config = load_config()
@@ -401,6 +401,9 @@ class RapFiEngine:
             if not line: break
             messages.append(line)
             stripped = line.strip()
+            # 打印引擎思考输出（调试用）
+            if stripped.startswith("MESSAGE") or "Depth" in stripped or "Speed" in stripped:
+                print(f"  [ENGINE] {stripped}")
             if stripped.startswith("MESSAGE"): continue
             if stripped.startswith("ERROR"): raise RuntimeError("引擎错误: " + stripped)
             if stripped == "OK": continue
@@ -413,6 +416,7 @@ class RapFiEngine:
         with self._lock:
             if not self.started:
                 if not self.start(): raise RuntimeError(f"引擎启动失败: {self._start_error}")
+            print(f"[ENGINE] think: {len(moves)} moves, engine_color={engine_color}")
             self._send_raw("BOARD")
             for x, y, c in moves:
                 self._send_raw(f"{x},{y},{c}")
@@ -420,6 +424,7 @@ class RapFiEngine:
             move, messages = self._parse_move_response()
             if move is None:
                 raise RuntimeError(f"引擎未返回落子: {messages[-3:] if messages else 'empty'}")
+            print(f"[ENGINE] 返回: ({move[0]},{move[1]})")
             return move
 
 

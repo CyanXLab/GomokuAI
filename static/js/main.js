@@ -270,7 +270,9 @@ document.addEventListener("keydown", (e) => {
 });
 
 async function confirmMove(x, y) {
-    setThinking(true);
+    // pvp 模式不显示思考状态（只有 pve 模式 AI 应招时才需要）
+    const isPvp = State.gameMode === "pvp";
+    if (!isPvp) setThinking(true);
     try {
         const res = await API.post("/api/move", { x, y });
         if (res.ok) {
@@ -281,7 +283,7 @@ async function confirmMove(x, y) {
     } catch (err) {
         toast("网络错误: " + err.message, "error");
     } finally {
-        setThinking(false);
+        if (!isPvp) setThinking(false);
     }
 }
 
@@ -410,6 +412,8 @@ function renderRuleHint() {
 }
 
 function setThinking(v) {
+    // pvp 模式永远不显示思考状态
+    if (State.gameMode === "pvp") v = false;
     State.thinking = v;
     renderControls();
     if (v) {
