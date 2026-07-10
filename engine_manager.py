@@ -408,7 +408,7 @@ class RapFiEngine:
             stripped = line.strip()
             # 打印引擎思考输出（调试用）
             if stripped.startswith("MESSAGE") or "Depth" in stripped or "Speed" in stripped:
-                print(f"  [ENGINE] {stripped}")
+                print(f"  [ENGINE] {stripped}", flush=True)
             if stripped.startswith("MESSAGE"): continue
             if stripped.startswith("ERROR"): raise RuntimeError("引擎错误: " + stripped)
             if stripped == "OK": continue
@@ -421,7 +421,7 @@ class RapFiEngine:
         with self._lock:
             if not self.started:
                 if not self.start(): raise RuntimeError(f"引擎启动失败: {self._start_error}")
-            print(f"[ENGINE] think: {len(moves)} moves, engine_color={engine_color}")
+            print(f"[ENGINE] think: {len(moves)} moves, engine_color={engine_color}", flush=True)
             self._send_raw("BOARD")
             for x, y, c in moves:
                 self._send_raw(f"{x},{y},{c}")
@@ -429,7 +429,7 @@ class RapFiEngine:
             move, messages = self._parse_move_response()
             if move is None:
                 raise RuntimeError(f"引擎未返回落子: {messages[-3:] if messages else 'empty'}")
-            print(f"[ENGINE] 返回: ({move[0]},{move[1]})")
+            print(f"[ENGINE] 返回: ({move[0]},{move[1]})", flush=True)
             return move
 
 

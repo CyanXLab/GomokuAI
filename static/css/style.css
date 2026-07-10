@@ -172,33 +172,38 @@ input, textarea, .move-list, .engine-info {
 }
 .hint-bar.warn { background: rgba(251,191,36,0.12); border-color: rgba(251,191,36,0.4); color: var(--warning); }
 
-/* 抽屉 */
+/* 抽屉 - 固定定位，确保高度撑满且可滚动 */
 .drawer {
     width: var(--drawer-width); max-width: 90vw;
     background: rgba(22,27,34,0.98);
     border-left: 1px solid var(--border-subtle);
     display: none; flex-direction: column;
-    position: absolute; right: 0; top: 0; bottom: 0; z-index: 50;
+    position: fixed; right: 0; top: 0; bottom: 0; z-index: 50;
     box-shadow: var(--shadow-lg);
+    height: 100vh; /* 固定高度 */
+    max-height: 100vh;
 }
 .drawer.open { display: flex; animation: drawerIn var(--t-slow); }
 @keyframes drawerIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
 .drawer-header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 18px; border-bottom: 1px solid var(--border-subtle); flex-shrink: 0;
+    padding: 14px 18px; border-bottom: 1px solid var(--border-subtle);
+    flex-shrink: 0; /* 不压缩 */
 }
 .drawer-header h2 { font-size: 15px; font-weight: 600; }
 
-/* 关键：drawer-body 可滚动 */
+/* 关键：drawer-body 可滚动，flex:1 撑满剩余空间 */
 .drawer-body {
-    flex: 1; overflow-y: auto; overflow-x: hidden;
+    flex: 1 1 auto;
+    overflow-y: auto; overflow-x: hidden;
     padding: 14px; display: flex; flex-direction: column; gap: 12px;
     -webkit-overflow-scrolling: touch;
+    min-height: 0; /* 关键：让 flex 子元素可以收缩 */
 }
-.drawer-body::-webkit-scrollbar { width: 6px; }
+.drawer-body::-webkit-scrollbar { width: 6px; -webkit-appearance: none; }
 .drawer-body::-webkit-scrollbar-track { background: transparent; }
-.drawer-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+.drawer-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
 
 .drawer-backdrop {
     position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 40;

@@ -414,11 +414,16 @@ function renderRuleHint() {
 function setThinking(v) {
     // pvp 模式永远不显示思考状态
     if (State.gameMode === "pvp") v = false;
+    // 游戏结束时不显示思考
+    if (State.gameOver) v = false;
     State.thinking = v;
     renderControls();
     if (v) {
         setHint("引擎思考中…", "warn");
-    } else if (!State.gameOver) {
+    } else if (State.gameOver) {
+        const winText = State.winner === 1 ? "黑棋胜" : State.winner === 2 ? "白棋胜" : "平局";
+        setHint("游戏结束 - " + winText);
+    } else {
         setHint("点击棋盘交叉点选择落子，再次点击确认");
     }
 }
@@ -575,14 +580,20 @@ $("saveSettings").addEventListener("click", async () => {
 
 // ============= 轮询 =============
 async function pollState() {
-    if (State.thinking) {
-        try {
-            const res = await API.get("/api/state");
-            if (res.ok) updateFromServer(res.data);
-        } catch (e) {}
-    }
+    // 始终轮询，确保状态同步
+    try {
+        const res = await API.get("/api/state");
+        if (res.ok) {
+            const prevThinking = State.thinking;
+            updateFromServer(res.data);
+            // 如果服务端 thinking 变为 false 但前端还显示思考中，强制更新
+            if (prevThinking && !State.thinking) {
+                setThinking(false);
+            }
+        }
+    } catch (e) {}
 }
-setInterval(pollState, 500);
+setInterval(pollState, 1000);
 
 // ============= Toast =============
 let toastTimer = null;

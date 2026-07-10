@@ -68,7 +68,7 @@ def do_new_game(rule, board_size, player_color, game_mode, timeout_turn, thread_
     state = get_state()
     engine = get_engine()
 
-    print(f"[NEW_GAME] rule={rule}, size={board_size}, color={player_color}, mode={game_mode}")
+    print(f"[NEW_GAME] rule={rule}, size={board_size}, color={player_color}, mode={game_mode}", flush=True)
 
     if timeout_turn is not None: engine.set_timeout_turn(timeout_turn)
     if thread_num is not None: engine.set_thread_num(thread_num)
@@ -78,23 +78,23 @@ def do_new_game(rule, board_size, player_color, game_mode, timeout_turn, thread_
     engine.set_board_size(board_size)
 
     state.reset(rule=rule, board_size=board_size, player_color=player_color, game_mode=game_mode)
-    print(f"[NEW_GAME] 状态已重置, thinking={state.thinking}, game_over={state.game_over}")
+    print(f"[NEW_GAME] 状态已重置, thinking={state.thinking}, game_over={state.game_over}", flush=True)
 
     if game_mode == "pve" and player_color == 2:
-        print(f"[NEW_GAME] pve 玩家执白, AI 先手")
+        print(f"[NEW_GAME] pve 玩家执白, AI 先手", flush=True)
         state.thinking = True
         try:
             move = engine.think([], engine_color=1)
-            print(f"[NEW_GAME] AI 首手: ({move[0]},{move[1]})")
+            print(f"[NEW_GAME] AI 首手: ({move[0]},{move[1]})", flush=True)
             state.moves.append({"x": move[0], "y": move[1], "color": 1, "by": "ai"})
             state.view_index = len(state.moves)
         except Exception as e:
             state.last_error = str(e)
-            print(f"[NEW_GAME] AI 错误: {e}")
+            print(f"[NEW_GAME] AI 错误: {e}", flush=True)
             traceback.print_exc()
         finally:
             state.thinking = False
-            print(f"[NEW_GAME] AI 首手完成, thinking=False")
+            print(f"[NEW_GAME] AI 首手完成, thinking=False", flush=True)
 
     return _ok(state.to_dict())
 
@@ -104,7 +104,7 @@ def do_player_move(x, y):
     state = get_state()
     engine = get_engine()
 
-    print(f"[MOVE] 玩家请求下子 ({x},{y}), mode={state.game_mode}, thinking={state.thinking}, game_over={state.game_over}")
+    print(f"[MOVE] 玩家请求下子 ({x},{y}), mode={state.game_mode}, thinking={state.thinking}, game_over={state.game_over}", flush=True)
 
     with state._lock:
         if state.thinking:
@@ -112,13 +112,13 @@ def do_player_move(x, y):
 
         # 在历史位置或游戏结束时，自动截断后续
         if state.view_index < len(state.moves) or state.game_over:
-            print(f"[MOVE] 截断历史: {len(state.moves)} -> {state.view_index}")
+            print(f"[MOVE] 截断历史: {len(state.moves)} -> {state.view_index}", flush=True)
             state.moves = state.moves[: state.view_index]
             state.game_over = False
             state.winner = 0
 
         current_color = state.get_current_color()
-        print(f"[MOVE] 当前颜色: {current_color}")
+        print(f"[MOVE] 当前颜色: {current_color}", flush=True)
 
         board = state.get_board()
         if not (0 <= x < state.board_size and 0 <= y < state.board_size):
@@ -128,42 +128,42 @@ def do_player_move(x, y):
 
         state.moves.append({"x": x, "y": y, "color": current_color, "by": "human"})
         state.view_index = len(state.moves)
-        print(f"[MOVE] 已下子, 总步数={len(state.moves)}")
+        print(f"[MOVE] 已下子, 总步数={len(state.moves)}", flush=True)
 
         if _check_win(state):
             state.game_over = True
             state.winner = current_color
             state.thinking = False  # 确保重置
-            print(f"[MOVE] 游戏结束! 胜者={current_color}")
+            print(f"[MOVE] 游戏结束! 胜者={current_color}", flush=True)
             return _ok(state.to_dict())
 
     # pve 模式：AI 自动应招
     if state.game_mode == "pve":
-        print(f"[MOVE] pve 模式, AI 开始应招")
+        print(f"[MOVE] pve 模式, AI 开始应招", flush=True)
         state.thinking = True
         try:
             engine.set_rule(state.rule)
             visible = [(m["x"], m["y"], m["color"]) for m in state.get_visible_moves()]
             ai_color = 2 if state.player_color == 1 else 1
-            print(f"[MOVE] AI 思考中, ai_color={ai_color}, 可见步数={len(visible)}")
+            print(f"[MOVE] AI 思考中, ai_color={ai_color}, 可见步数={len(visible)}", flush=True)
             move = engine.think(visible, engine_color=ai_color)
-            print(f"[MOVE] AI 返回: ({move[0]},{move[1]})")
+            print(f"[MOVE] AI 返回: ({move[0]},{move[1]})", flush=True)
             with state._lock:
                 state.moves.append({"x": move[0], "y": move[1], "color": ai_color, "by": "ai"})
                 state.view_index = len(state.moves)
                 if _check_win(state):
                     state.game_over = True
                     state.winner = ai_color
-                    print(f"[MOVE] AI 获胜!")
+                    print(f"[MOVE] AI 获胜!", flush=True)
         except Exception as e:
             state.last_error = str(e)
-            print(f"[MOVE] AI 错误: {e}")
+            print(f"[MOVE] AI 错误: {e}", flush=True)
             traceback.print_exc()
         finally:
             state.thinking = False
-            print(f"[MOVE] AI 思考结束, thinking=False")
+            print(f"[MOVE] AI 思考结束, thinking=False", flush=True)
     else:
-        print(f"[MOVE] pvp 模式, 不触发 AI")
+        print(f"[MOVE] pvp 模式, 不触发 AI", flush=True)
 
     return _ok(state.to_dict())
 
@@ -173,42 +173,42 @@ def do_ai_move():
     state = get_state()
     engine = get_engine()
 
-    print(f"[AI_MOVE] 请求, mode={state.game_mode}, thinking={state.thinking}, game_over={state.game_over}")
+    print(f"[AI_MOVE] 请求, mode={state.game_mode}, thinking={state.thinking}, game_over={state.game_over}", flush=True)
 
     with state._lock:
         if state.thinking:
             return _err("引擎思考中")
 
         if state.view_index < len(state.moves) or state.game_over:
-            print(f"[AI_MOVE] 截断历史: {len(state.moves)} -> {state.view_index}")
+            print(f"[AI_MOVE] 截断历史: {len(state.moves)} -> {state.view_index}", flush=True)
             state.moves = state.moves[: state.view_index]
             state.game_over = False
             state.winner = 0
 
         current_color = state.get_current_color()
-        print(f"[AI_MOVE] 当前颜色: {current_color}")
+        print(f"[AI_MOVE] 当前颜色: {current_color}", flush=True)
 
     state.thinking = True
     try:
         engine.set_rule(state.rule)
         visible = [(m["x"], m["y"], m["color"]) for m in state.get_visible_moves()]
-        print(f"[AI_MOVE] AI 思考中, 可见步数={len(visible)}")
+        print(f"[AI_MOVE] AI 思考中, 可见步数={len(visible)}", flush=True)
         move = engine.think(visible, engine_color=current_color)
-        print(f"[AI_MOVE] AI 返回: ({move[0]},{move[1]})")
+        print(f"[AI_MOVE] AI 返回: ({move[0]},{move[1]})", flush=True)
         with state._lock:
             state.moves.append({"x": move[0], "y": move[1], "color": current_color, "by": "ai"})
             state.view_index = len(state.moves)
             if _check_win(state):
                 state.game_over = True
                 state.winner = current_color
-                print(f"[AI_MOVE] AI 获胜!")
+                print(f"[AI_MOVE] AI 获胜!", flush=True)
     except Exception as e:
         state.last_error = str(e)
-        print(f"[AI_MOVE] 错误: {e}")
+        print(f"[AI_MOVE] 错误: {e}", flush=True)
         traceback.print_exc()
     finally:
         state.thinking = False
-        print(f"[AI_MOVE] 完成, thinking=False")
+        print(f"[AI_MOVE] 完成, thinking=False", flush=True)
 
     return _ok(state.to_dict())
 
@@ -358,32 +358,32 @@ def main():
         try: port = int(sys.argv[1])
         except: pass
 
-    print("=" * 60)
-    print("  RapFi 在线五子棋 (Flask)")
-    print("=" * 60)
+    print("=" * 60, flush=True)
+    print("  RapFi 在线五子棋 (Flask)", flush=True)
+    print("=" * 60, flush=True)
     try:
         from engine_manager import list_available_engines, _current_os
         import platform
-        print(f"[INFO] 平台: {_current_os()} {platform.machine()}")
+        print(f"[INFO] 平台: {_current_os()} {platform.machine()}", flush=True)
         avail = [e for e in list_available_engines(current_os_only=True) if e["available"]]
-        print(f"[INFO] 可用引擎: {len(avail)} 个")
+        print(f"[INFO] 可用引擎: {len(avail)} 个", flush=True)
         for e in avail:
-            print(f"       - {e['arch_label']}")
+            print(f"       - {e['arch_label']}", flush=True)
         engine = get_engine()
         success = engine.start()
         cfg = engine.get_config()
         if success:
-            print(f"\n[OK] 引擎已启动: {cfg['engine_path']}")
-            print(f"     架构: {cfg['engine_arch_label']}")
-            print(f"     规则: {RULE_INFO[cfg['rule']]['name']}")
+            print(f"\n[OK] 引擎已启动: {cfg['engine_path']}", flush=True)
+            print(f"     架构: {cfg['engine_arch_label']}", flush=True)
+            print(f"     规则: {RULE_INFO[cfg['rule']]['name']}", flush=True)
         else:
-            print(f"\n[WARN] 引擎启动失败: {cfg.get('start_error','')[:200]}")
+            print(f"\n[WARN] 引擎启动失败: {cfg.get('start_error','')[:200]}", flush=True)
     except Exception as e:
-        print(f"[WARN] 引擎初始化异常: {e}")
+        print(f"[WARN] 引擎初始化异常: {e}", flush=True)
         traceback.print_exc()
 
-    print(f"\n[OK] 服务已启动: http://127.0.0.1:{port}/")
-    print("    按 Ctrl+C 退出\n")
+    print(f"\n[OK] 服务已启动: http://127.0.0.1:{port}/", flush=True)
+    print("    按 Ctrl+C 退出\n", flush=True)
 
     import logging
     logging.getLogger("werkzeug").setLevel(logging.WARNING)
@@ -391,9 +391,9 @@ def main():
     try:
         app.run(host="127.0.0.1", port=port, debug=False, threaded=True)
     except KeyboardInterrupt:
-        print("\n[退出] 正在关闭引擎...")
+        print("\n[退出] 正在关闭引擎...", flush=True)
         get_engine().stop()
-        print("[完成]")
+        print("[完成]", flush=True)
 
 
 if __name__ == "__main__":
