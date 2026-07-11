@@ -625,14 +625,11 @@ export default {
       if (this.thinking) return
 
       if (e.button == 0) {
-        // 检查是否点击了棋盘上的棋子（任意棋子都可以触发AI推算）
-        if (!this.isAITurn && !this.isEmpty(pos) && this.winline.length == 0) {
-          // 点击了已下的棋子,触发AI推算
-          this.startThink()
-          return
-        }
+        // FIX: 点击已有棋子的位置不做任何操作（用户反馈: 点了有子的地方却触发AI下子）
+        // 原行为: 点击任何已有棋子都触发 AI 推算，导致用户误触
+        if (!this.isEmpty(pos)) return
 
-        if ((this.isEmpty(pos) && this.winline.length == 0) || this.isAITurn) {
+        if (this.winline.length == 0 || this.isAITurn) {
           if (!this.isAITurn) {
             if (this.rule == 5 && !this.swaped && this.position.length == 1) {
               // SWAP1规则

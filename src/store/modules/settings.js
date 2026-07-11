@@ -10,7 +10,7 @@ const state = {
   language: null,
   theme: 'auto', // 'auto' | 'light' | 'dark'
   boardStyle: {
-    boardColor: '#F4D03F',
+    boardColor: '#DCB35C',
     lineColor: '', // empty = auto based on theme
     lineWidth: 0.03,
     coordColor: '', // empty = auto based on theme

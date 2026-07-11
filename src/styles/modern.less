@@ -285,7 +285,17 @@ canvas, .board, .board * { transition: none !important; }
 .weui-btn:active { transform: scale(0.97); }
 .weui-btn_primary { background-color: var(--color-accent) !important; color: var(--color-text-on-accent) !important; }
 .weui-btn_primary:active { background-color: var(--color-accent-pressed) !important; }
-.weui-btn_warn { background-color: var(--color-error) !important; }
+/* warn button: use vivid red (not the muted error color) for clear visibility */
+.weui-btn_warn {
+  background-color: #d32f2f !important;
+  color: #ffffff !important;
+}
+.weui-btn_warn:active { background-color: #b71c1c !important; }
+[data-theme='dark'] .weui-btn_warn {
+  background-color: #ef5350 !important;
+  color: #ffffff !important;
+}
+[data-theme='dark'] .weui-btn_warn:active { background-color: #c62828 !important; }
 
 /* Game toolbar buttons */
 .button-box .weui-btn {

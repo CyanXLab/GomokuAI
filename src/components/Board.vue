@@ -57,9 +57,14 @@ function drawBackground(ctx, style, w, h, noShadow) {
   var isDark = document.documentElement.getAttribute('data-theme') === 'dark'
   if (!style.lineColor) style.lineColor = isDark ? '#c9c5ca' : '#000000'
   if (!style.coordColor) style.coordColor = isDark ? '#c9c5ca' : '#000000'
-  // In dark mode, darken the default bright board color
-  if (isDark && style.boardColor && style.boardColor.toUpperCase() === '#F4D03F') {
-    style.boardColor = '#3d3530'
+  // In dark mode, use a darkened board color (override any bright default)
+  // Match both legacy '#F4D03F' and new default '#DCB35C' so users with saved
+  // cookies still get the dark-mode darkening behavior.
+  if (isDark && style.boardColor) {
+    var bc = style.boardColor.toUpperCase()
+    if (bc === '#F4D03F' || bc === '#DCB35C') {
+      style.boardColor = '#3d3530'
+    }
   }
   ctx.save()
   if (!noShadow) {
