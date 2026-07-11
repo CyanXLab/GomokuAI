@@ -15,7 +15,7 @@ importScripts("/workbox-v4.3.1/workbox-sw.js");
 workbox.setConfig({modulePathPrefix: "/workbox-v4.3.1"});
 
 importScripts(
-  "/precache-manifest.9b25bda59f82ed44d4fd7e4a192bc8ed.js"
+  "/precache-manifest.429ab65a80cc6c906f6168a48b16c6ad.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "gomoku-ai"});

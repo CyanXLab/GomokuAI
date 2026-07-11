@@ -254,7 +254,7 @@
           <v-chart ref="chart" :data="evalData" :width="chartWidth" :height="chartWidth * 0.6">
             <v-scale ref="chartx" x :tick-interval="2" />
             <v-scale y alias="eval" :tick-count="5" />
-            <v-point :style="{ stroke: '#fff', lineWidth: 1 }" :size="5" shape="smooth" series-field="piece" />
+            <v-point :style="{ stroke: isDarkTheme ? '#211f26' : '#fff', lineWidth: 1 }" :size="5" shape="smooth" series-field="piece" />
             <v-line shape="smooth" series-field="piece" />
             <v-area shape="smooth" series-field="piece" />
           </v-chart>

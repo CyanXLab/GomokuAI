@@ -185,14 +185,8 @@ export default {
           ensureEngineLoaded(true)
         },
         updated() {
-          _this.$vux.confirm.show_i18n({
-            title: _this.$t('update.title'),
-            content: _this.$t('update.msg'),
-            onConfirm() {
-              location.reload()
-            },
-            onCancel() { }
-          })
+          // 静默更新,不弹窗打扰用户
+          console.log('New content available, will reload on next visit.')
         },
         error(error) {
           clearTimeout(swTimeout)
@@ -201,30 +195,9 @@ export default {
         }
       })
 
+      // 禁用安装提示弹窗,不打扰用户
       window.addEventListener('beforeinstallprompt', (e) => {
-        if (!canShowInstallPrompt()) {
-          // 不符合显示条件，不阻止默认行为也不显示自定义弹窗
-          return;
-        }
-
-        // 阻止默认的迷你信息栏或安装对话框在移动设备上出现
         e.preventDefault();
-        // 保存事件，稍后需要触发它
-        const deferredPrompt = e;
-
-        _this.$vux.confirm.show_i18n({
-          title: _this.$t('install.title'),
-          content: _this.$t('install.msg'),
-          onConfirm() {
-            // 更新弹窗显示数据
-            updateInstallPromptData();
-            // 显示安装提示
-            deferredPrompt.prompt();
-          },
-          onCancel() {
-            updateInstallPromptData();
-          }
-        });
       });
     } else {
       ensureEngineLoaded(true)
