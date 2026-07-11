@@ -183,7 +183,7 @@ canvas, .board, .board * { transition: none !important; }
   margin-top: 4px !important;
 }
 
-/* ===== Switch (M3) - fixed alignment ===== */
+/* ===== Switch (M3) - fixed alignment + correct off-state ===== */
 .weui-switch, .weui-switch-cp__box {
   background-color: var(--color-text-tertiary) !important;
   width: 44px !important;
@@ -198,6 +198,15 @@ canvas, .board, .board * { transition: none !important; }
   -webkit-appearance: none !important;
   outline: none !important;
   box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+/* CRITICAL FIX: hide the default ::before track (was showing as white block in off-state) */
+.weui-switch::before,
+.weui-switch-cp__box::before {
+  content: none !important;
+  display: none !important;
+  background: transparent !important;
+  transform: none !important;
 }
 .weui-switch:checked,
 .weui-switch-cp__input:checked + .weui-switch-cp__box {
@@ -215,7 +224,7 @@ canvas, .board, .board * { transition: none !important; }
   -webkit-transform: translateY(-50%) !important;
   border-radius: 50% !important;
   background: #fff !important;
-  transition: transform 0.2s ease, left 0.2s ease !important;
+  transition: left 0.2s ease, transform 0.2s ease !important;
   box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
   margin: 0 !important;
 }
@@ -231,9 +240,11 @@ canvas, .board, .board * { transition: none !important; }
   height: 24px !important;
   opacity: 0 !important;
 }
-.weui-cell__ft {
+.weui-cell_switch .weui-cell__ft {
   display: flex !important;
   align-items: center !important;
+  font-size: 0 !important;
+  position: relative !important;
 }
 
 /* ===== Radio ===== */
@@ -324,7 +335,8 @@ canvas, .board, .board * { transition: none !important; }
 .weui-cells_radio .weui-cell__bd { color: var(--color-text-primary) !important; }
 .weui-cells_radio .weui-cell__ft { color: var(--color-text-secondary) !important; }
 
-/* ===== Actionsheet - centered, hidden by default ===== */
+/* ===== Actionsheet - centered, BULLETPROOF hidden by default ===== */
+/* Default state: completely hidden via display:none (most reliable, no transition flicker) */
 .weui-actionsheet {
   background: var(--color-bg-elevated) !important;
   border-radius: var(--radius-lg) !important;
@@ -336,34 +348,35 @@ canvas, .board, .board * { transition: none !important; }
   -webkit-transform: translate(-50%, -50%) !important;
   width: 85% !important;
   max-width: 360px !important;
-  /* CRITICAL: hidden by default */
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-  transition: opacity 0.25s ease, visibility 0.25s ease !important;
+  /* CRITICAL: completely hidden by default (display:none beats opacity/visibility) */
+  display: none !important;
   z-index: 5000 !important;
+  box-shadow: var(--shadow-lg) !important;
+  overflow: hidden !important;
 }
 /* Only show when toggle class is present */
 .weui-actionsheet_toggle {
-  opacity: 1 !important;
-  visibility: visible !important;
-  pointer-events: auto !important;
+  display: block !important;
   transform: translate(-50%, -50%) !important;
   -webkit-transform: translate(-50%, -50%) !important;
 }
 .weui-actionsheet__cell {
   color: var(--color-text-primary) !important;
   background: var(--color-bg-elevated) !important;
+  padding: 14px 0 !important;
+  font-size: 16px !important;
 }
 .weui-actionsheet__cell:active { background: var(--color-bg-active) !important; }
 .weui-actionsheet__action { margin-top: 0 !important; }
 .weui-actionsheet__action .weui-actionsheet__cell { color: var(--color-accent) !important; }
+/* Mask: visible & clickable when shown (so user can click outside to close) */
 .weui-mask {
   background: rgba(0,0,0,0.5) !important;
-  /* hidden by default */
-  opacity: 0 !important;
-  visibility: hidden !important;
-  transition: opacity 0.25s ease, visibility 0.25s ease !important;
+  z-index: 4999 !important;
+}
+.weui-mask_transparent {
+  background: rgba(0,0,0,0.5) !important;
+  /* vux uses weui-mask_transparent but we want a visible dark overlay so the actionsheet stands out */
 }
 .weui-mask_show {
   opacity: 1 !important;
@@ -420,18 +433,26 @@ canvas, .board, .board * { transition: none !important; }
 .theme-segment-item.active { background: var(--color-bg-elevated); color: var(--color-accent); box-shadow: var(--shadow-sm); }
 .theme-segment-item .fa { margin-right: 4px; font-size: 11px; }
 
-/* ===== Chart - force dark mode ===== */
-.v-chart { background: transparent !important; }
-.v-chart canvas { background: transparent !important; }
+/* ===== Chart - force dark mode (override v-chart inline background-color:#fff) ===== */
+/* v-chart component renders <div style="background-color:#fff"> WITHOUT a class, so we must
+   target it via its container. Use direct child selector to override the inline style. */
+.chart-container > div {
+  background-color: transparent !important;
+  background: transparent !important;
+}
 .chart-container { background: transparent !important; }
 .chart-group .weui-cells { background: var(--color-bg-card) !important; }
 .chart-group { background: var(--color-bg-card) !important; }
+/* The canvas itself */
+.chart-container canvas,
+.chart-group canvas,
+.weui-cells canvas {
+  background: transparent !important;
+}
 
-/* Dark mode: invert ALL canvas inside chart-group */
+/* Dark mode: invert ALL canvas inside chart-group so chart elements (lines/points/axes) become dark-friendly */
 [data-theme='dark'] .chart-group canvas,
-[data-theme='dark'] .v-chart canvas,
 [data-theme='dark'] .chart-container canvas,
-[data-theme='dark'] group canvas,
 [data-theme='dark'] .weui-cells canvas {
   filter: invert(0.94) hue-rotate(180deg) brightness(0.92) contrast(1.1) !important;
   background: transparent !important;
