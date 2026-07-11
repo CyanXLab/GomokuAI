@@ -6,7 +6,7 @@
     <title>GomokuPrime</title>
     <link rel="stylesheet" href="https://cdn.staticfile.net/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.cn/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/style.css?v=v4">
+    <link rel="stylesheet" href="/static/css/style.css?v=v5">
 </head>
 <body>
     <div id="app">
@@ -18,40 +18,31 @@
                 </div>
                 <div class="brand-meta">
                     <div class="brand-title">GomokuPrime</div>
-                    <div class="brand-ver">v4.0</div>
+                    <div class="brand-ver">v5.0</div>
                 </div>
             </div>
             <div class="titlebar-right">
+                <span class="status-tag" id="statusTag">自由 · 黑棋 · 0/0 · 人机</span>
                 <div class="pill"><span class="pill-dot"></span><span id="engineStatus">就绪</span></div>
-                <button class="icon-button" id="btnSettings" title="设置"><i class="bi bi-gear"></i></button>
+                <button class="icon-button" id="btnSettings" title="引擎参数"><i class="bi bi-gear"></i></button>
             </div>
         </header>
 
         <main class="content">
-            <!-- 左侧：棋盘 -->
             <section class="board-section">
                 <div class="board-card">
                     <canvas id="board" width="640" height="640"></canvas>
                 </div>
-                <div class="status-bar">
-                    <div class="status-chip"><i class="bi bi-card-checklist"></i><span id="statusRule">自由</span></div>
-                    <div class="status-chip"><span class="stone-mini" id="turnStone"></span><span id="statusTurn">黑棋</span></div>
-                    <div class="status-chip"><i class="bi bi-hash"></i><span id="statusStep">0/0</span></div>
-                    <div class="status-chip"><i class="bi bi-people"></i><span id="statusMode">人机</span></div>
-                    <div id="statusResult" class="status-result hidden"></div>
-                </div>
                 <div class="board-controls">
-                    <button id="btnBack" class="ctrl-button" title="后退"><i class="bi bi-arrow-left"></i><span>后退</span></button>
-                    <button id="btnForward" class="ctrl-button" title="前进"><span>前进</span><i class="bi bi-arrow-right"></i></button>
-                    <button id="btnAiMove" class="ctrl-button accent" title="AI下这一步"><i class="bi bi-cpu"></i><span>AI下子</span></button>
+                    <button id="btnBack" class="ctrl-btn" title="后退"><i class="bi bi-arrow-left"></i></button>
+                    <button id="btnForward" class="ctrl-btn" title="前进"><i class="bi bi-arrow-right"></i></button>
+                    <button id="btnAiMove" class="ctrl-btn accent" title="AI下这一步"><i class="bi bi-cpu"></i><span>AI下子</span></button>
                 </div>
                 <div class="hint-bar" id="hintBar"><i class="bi bi-info-circle"></i><span id="hintText">点击棋盘交叉点，再次点击确认</span></div>
             </section>
 
-            <!-- 右侧：固定面板 -->
             <aside class="sidebar">
                 <div class="sidebar-body">
-                    <!-- 新对局 -->
                     <div class="card">
                         <div class="card-header"><i class="bi bi-plus-circle"></i><h3>新对局</h3></div>
                         <div class="card-body">
@@ -61,7 +52,6 @@
                                     <button data-mode="pve" class="active"><i class="bi bi-robot"></i>人机</button>
                                     <button data-mode="pvp"><i class="bi bi-people"></i>双人</button>
                                 </div>
-                                <div class="field-hint" id="modeHint">人机：AI 自动应招</div>
                             </div>
                             <div class="field">
                                 <label class="field-label">规则</label>
@@ -91,33 +81,33 @@
                         </div>
                     </div>
 
-                    <!-- 走子历史 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-graph-up"></i><h3>评估曲线</h3>
+                            <label class="switch"><input type="checkbox" id="evalToggle" checked><span class="slider"></span></label>
+                        </div>
+                        <div class="card-body" id="evalBody">
+                            <canvas id="evalChart" width="300" height="120"></canvas>
+                            <div class="eval-legend">
+                                <span class="legend-item"><span class="legend-dot" style="background:#60a5fa"></span>黑棋</span>
+                                <span class="legend-item"><span class="legend-dot" style="background:#4ade80"></span>白棋</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="card">
                         <div class="card-header"><i class="bi bi-list-ol"></i><h3>走子历史</h3></div>
                         <div class="card-body no-pad">
                             <div id="moveList" class="move-list"><div class="empty-hint">尚未开始对局</div></div>
                         </div>
                     </div>
-
-                    <!-- 评估曲线 -->
-                    <div class="card">
-                        <div class="card-header"><i class="bi bi-graph-up"></i><h3>评估曲线</h3></div>
-                        <div class="card-body">
-                            <canvas id="evalChart" width="300" height="150"></canvas>
-                            <div class="eval-legend">
-                                <span class="legend-item"><span class="legend-dot black"></span>黑棋</span>
-                                <span class="legend-item"><span class="legend-dot white"></span>白棋</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </aside>
         </main>
 
-        <!-- 设置弹窗 -->
         <div id="settingsModal" class="modal-backdrop hidden">
             <div class="modal">
-                <div class="modal-header"><h2>引擎设置</h2><button id="closeSettings" class="icon-button"><i class="bi bi-x-lg"></i></button></div>
+                <div class="modal-header"><h2>引擎参数</h2><button id="closeSettings" class="icon-button"><i class="bi bi-x-lg"></i></button></div>
                 <div class="modal-body">
                     <div class="field">
                         <label class="field-label">单步思考时间 (毫秒)</label>
@@ -125,12 +115,19 @@
                         <div class="field-hint">越大棋力越强（建议 5000-15000）</div>
                     </div>
                     <div class="field">
-                        <label class="field-label">线程数 (0=自动)</label>
+                        <label class="field-label">线程数 (0=自动使用所有核心)</label>
                         <input type="number" id="cfgThreads" value="0" min="0" max="64" class="input">
                     </div>
                     <div class="field">
                         <label class="field-label">最大内存 (MB)</label>
                         <input type="number" id="cfgMemory" value="512" min="32" max="4096" step="32" class="input">
+                        <div class="field-hint">置换表大小，越大命中率越高</div>
+                    </div>
+                    <div class="field">
+                        <label class="field-label">引擎架构</label>
+                        <select id="cfgArch" class="input">
+                            <option value="auto">自动选择</option>
+                        </select>
                     </div>
                     <div class="field">
                         <label class="field-label">引擎信息</label>
@@ -146,6 +143,6 @@
 
         <div id="toast" class="toast hidden"></div>
     </div>
-    <script src="/static/js/main.js?v=v4"></script>
+    <script src="/static/js/main.js?v=v5"></script>
 </body>
 </html>

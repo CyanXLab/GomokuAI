@@ -1,18 +1,10 @@
 /**
- * GomokuPrime 前端 v4.0
- * - 固定左右分栏布局
- * - 棋子序号
- * - 评估曲线
- * - 双人模式
+ * GomokuPrime v5.0
  */
 const API = {
     async get(path) { const r = await fetch(path); return r.json(); },
     async post(path, body) {
-        const r = await fetch(path, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body || {}),
-        });
+        const r = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body || {}) });
         return r.json();
     },
 };
@@ -21,14 +13,14 @@ const State = {
     rule: 0, boardSize: 15, board: [], moves: [], totalMoves: 0, viewIndex: 0,
     currentColor: 1, playerColor: 1, gameMode: "pve",
     gameOver: false, winner: 0, thinking: false,
-    pendingMove: null, hoverPos: null,
-    evalHistory: [],
+    pendingMove: null, hoverPos: null, evalHistory: [],
+    showEval: true,
 };
 
 const RULE_INFO = {
-    0: { name: "自由规则", desc: "无禁手，五连或长连均胜。黑棋天元开局必胜。" },
-    1: { name: "标准规则", desc: "无禁手，但有三三、四四等基础限制。" },
-    2: { name: "连珠规则", desc: "黑棋有三三、四四、长连禁手。黑/白模型分开。" },
+    0: { name: "自由", desc: "无禁手，五连或长连均胜。黑棋天元开局必胜。" },
+    1: { name: "标准", desc: "无禁手，但有三三、四四等基础限制。" },
+    2: { name: "连珠", desc: "黑棋有三三、四四、长连禁手。黑/白模型分开。" },
 };
 
 const $ = (id) => document.getElementById(id);
@@ -41,7 +33,7 @@ const evalCtx = evalCanvas.getContext("2d");
 function resizeCanvas() {
     const wrapper = canvas.parentElement;
     const rect = wrapper.getBoundingClientRect();
-    const size = Math.max(280, Math.min(rect.width - 24, rect.height - 24));
+    const size = Math.max(280, Math.min(rect.width - 16, rect.height - 16));
     const dpr = window.devicePixelRatio || 1;
     canvas.style.width = size + "px";
     canvas.style.height = size + "px";
@@ -57,19 +49,16 @@ function drawBoard() {
     const padding = cssW * 0.045;
     const cellSize = (cssW - padding * 2) / (size - 1);
 
-    // 棋盘背景
     const grad = ctx.createLinearGradient(0, 0, cssW, cssW);
     grad.addColorStop(0, "#d4a368"); grad.addColorStop(0.5, "#c8965a"); grad.addColorStop(1, "#b8854a");
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, cssW, cssW);
 
-    // 内阴影
     const innerGrad = ctx.createRadialGradient(cssW/2, cssW/2, cssW*0.3, cssW/2, cssW/2, cssW*0.7);
     innerGrad.addColorStop(0, "rgba(0,0,0,0)"); innerGrad.addColorStop(1, "rgba(0,0,0,0.2)");
     ctx.fillStyle = innerGrad;
     ctx.fillRect(0, 0, cssW, cssW);
 
-    // 网格线
     ctx.strokeStyle = "rgba(70, 40, 20, 0.85)"; ctx.lineWidth = 1;
     for (let i = 0; i < size; i++) {
         const p = padding + i * cellSize;
@@ -79,7 +68,6 @@ function drawBoard() {
     ctx.strokeStyle = "rgba(70, 40, 20, 1)"; ctx.lineWidth = 2;
     ctx.strokeRect(padding, padding, cssW - padding*2, cssW - padding*2);
 
-    // 星位
     const stars = getStarPoints(size);
     ctx.fillStyle = "rgba(70, 40, 20, 0.9)";
     for (const [sx, sy] of stars) {
@@ -88,7 +76,6 @@ function drawBoard() {
         ctx.fill();
     }
 
-    // 坐标
     ctx.fillStyle = "rgba(70, 40, 20, 0.7)";
     ctx.font = `${Math.max(9, cellSize*0.22)}px sans-serif`;
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
@@ -98,7 +85,6 @@ function drawBoard() {
         ctx.fillText(String(size - i), padding * 0.5, p);
     }
 
-    // 棋子 + 序号
     const visibleMoves = State.moves.slice(0, State.viewIndex);
     for (let i = 0; i < visibleMoves.length; i++) {
         const m = visibleMoves[i];
@@ -106,7 +92,6 @@ function drawBoard() {
         drawMoveNumber(m.x, m.y, m.color, i + 1, cellSize, padding);
     }
 
-    // 标记最后一步
     if (State.viewIndex > 0) {
         const last = State.moves[State.viewIndex - 1];
         const px = padding + last.x * cellSize;
@@ -115,7 +100,6 @@ function drawBoard() {
         ctx.beginPath(); ctx.arc(px, py, cellSize * 0.16, 0, Math.PI * 2); ctx.stroke();
     }
 
-    // 待确认
     if (State.pendingMove) {
         const { x, y } = State.pendingMove;
         drawStone(x, y, State.currentColor, cellSize, padding, true);
@@ -136,8 +120,7 @@ function drawStone(x, y, color, cellSize, padding, preview) {
     const r = cellSize * 0.43;
     ctx.save();
     if (preview) ctx.globalAlpha = 0.5;
-    ctx.shadowColor = "rgba(0,0,0,0.55)"; ctx.shadowBlur = 5;
-    ctx.shadowOffsetX = 1; ctx.shadowOffsetY = 2;
+    ctx.shadowColor = "rgba(0,0,0,0.55)"; ctx.shadowBlur = 5; ctx.shadowOffsetX = 1; ctx.shadowOffsetY = 2;
     const grad = ctx.createRadialGradient(px - r*0.35, py - r*0.35, r*0.1, px, py, r);
     if (color === 1) { grad.addColorStop(0, "#6a6a6a"); grad.addColorStop(0.5, "#2a2a2a"); grad.addColorStop(1, "#050505"); }
     else { grad.addColorStop(0, "#ffffff"); grad.addColorStop(0.5, "#f0f0f0"); grad.addColorStop(1, "#b0b0b0"); }
@@ -166,66 +149,42 @@ function getStarPoints(size) {
 
 // ============= 评估曲线 =============
 function drawEvalChart() {
-    const w = evalCanvas.width;
-    const h = evalCanvas.height;
+    const w = evalCanvas.width; const h = evalCanvas.height;
     evalCtx.clearRect(0, 0, w, h);
-
-    // 背景网格
-    evalCtx.strokeStyle = "rgba(255,255,255,0.05)";
-    evalCtx.lineWidth = 1;
-    for (let i = 0; i <= 4; i++) {
-        const y = (h / 4) * i;
-        evalCtx.beginPath(); evalCtx.moveTo(0, y); evalCtx.lineTo(w, y); evalCtx.stroke();
-    }
-
-    // 中线（0值线）
+    evalCtx.strokeStyle = "rgba(255,255,255,0.05)"; evalCtx.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) { const y = (h / 4) * i; evalCtx.beginPath(); evalCtx.moveTo(0, y); evalCtx.lineTo(w, y); evalCtx.stroke(); }
     evalCtx.strokeStyle = "rgba(255,255,255,0.15)";
     evalCtx.beginPath(); evalCtx.moveTo(0, h/2); evalCtx.lineTo(w, h/2); evalCtx.stroke();
 
     const history = State.evalHistory || [];
     if (history.length < 2) {
         evalCtx.fillStyle = "rgba(255,255,255,0.3)";
-        evalCtx.font = "12px sans-serif";
-        evalCtx.textAlign = "center";
+        evalCtx.font = "11px sans-serif"; evalCtx.textAlign = "center";
         evalCtx.fillText("暂无评估数据", w/2, h/2);
         return;
     }
-
     const maxVal = 1000;
     const step = w / Math.max(history.length - 1, 1);
 
-    // 黑棋曲线（蓝色）
-    evalCtx.strokeStyle = "#60a5fa";
-    evalCtx.lineWidth = 2;
-    evalCtx.beginPath();
+    evalCtx.strokeStyle = "#60a5fa"; evalCtx.lineWidth = 2; evalCtx.beginPath();
     for (let i = 0; i < history.length; i++) {
-        const x = i * step;
-        const v = history[i].black || 0;
+        const x = i * step; const v = history[i].black || 0;
         const y = h/2 - (v / maxVal) * (h/2 - 5);
-        if (i === 0) evalCtx.moveTo(x, y);
-        else evalCtx.lineTo(x, y);
+        if (i === 0) evalCtx.moveTo(x, y); else evalCtx.lineTo(x, y);
     }
     evalCtx.stroke();
 
-    // 白棋曲线（绿色）
-    evalCtx.strokeStyle = "#4ade80";
-    evalCtx.lineWidth = 2;
-    evalCtx.beginPath();
+    evalCtx.strokeStyle = "#4ade80"; evalCtx.lineWidth = 2; evalCtx.beginPath();
     for (let i = 0; i < history.length; i++) {
-        const x = i * step;
-        const v = history[i].white || 0;
+        const x = i * step; const v = history[i].white || 0;
         const y = h/2 - (v / maxVal) * (h/2 - 5);
-        if (i === 0) evalCtx.moveTo(x, y);
-        else evalCtx.lineTo(x, y);
+        if (i === 0) evalCtx.moveTo(x, y); else evalCtx.lineTo(x, y);
     }
     evalCtx.stroke();
 
-    // 当前位置标记
     if (State.viewIndex > 0 && State.viewIndex <= history.length) {
         const x = (State.viewIndex - 1) * step;
-        evalCtx.strokeStyle = "#ff4d6d";
-        evalCtx.lineWidth = 1.5;
-        evalCtx.setLineDash([3, 3]);
+        evalCtx.strokeStyle = "#ff4d6d"; evalCtx.lineWidth = 1.5; evalCtx.setLineDash([3, 3]);
         evalCtx.beginPath(); evalCtx.moveTo(x, 0); evalCtx.lineTo(x, h); evalCtx.stroke();
         evalCtx.setLineDash([]);
     }
@@ -245,11 +204,8 @@ function pixelToCell(px, py) {
 canvas.addEventListener("mousemove", (e) => {
     const rect = canvas.getBoundingClientRect();
     const cell = pixelToCell(e.clientX - rect.left, e.clientY - rect.top);
-    if (cell && (!State.hoverPos || State.hoverPos.x !== cell.x || State.hoverPos.y !== cell.y)) {
-        State.hoverPos = cell; drawBoard();
-    } else if (!cell && State.hoverPos) {
-        State.hoverPos = null; drawBoard();
-    }
+    if (cell && (!State.hoverPos || State.hoverPos.x !== cell.x || State.hoverPos.y !== cell.y)) { State.hoverPos = cell; drawBoard(); }
+    else if (!cell && State.hoverPos) { State.hoverPos = null; drawBoard(); }
 });
 canvas.addEventListener("mouseleave", () => { State.hoverPos = null; drawBoard(); });
 canvas.addEventListener("click", handleBoardClick);
@@ -259,13 +215,9 @@ function handleBoardClick(e) {
     const rect = canvas.getBoundingClientRect();
     const cell = pixelToCell(e.clientX - rect.left, e.clientY - rect.top);
     if (!cell) return;
-    if (State.board[cell.x][cell.y] !== 0) {
-        toast("该位置已有棋子", "error");
-        State.pendingMove = null; drawBoard(); return;
-    }
+    if (State.board[cell.x][cell.y] !== 0) { toast("该位置已有棋子", "error"); State.pendingMove = null; drawBoard(); return; }
     if (State.pendingMove && State.pendingMove.x === cell.x && State.pendingMove.y === cell.y) {
-        const move = State.pendingMove; State.pendingMove = null;
-        confirmMove(move.x, move.y);
+        const move = State.pendingMove; State.pendingMove = null; confirmMove(move.x, move.y);
     } else {
         State.pendingMove = cell;
         if (State.viewIndex < State.totalMoves) setHint("再次点击确认（从此步开始新对局）", "warn");
@@ -316,47 +268,23 @@ function updateFromServer(data) {
 
 function renderAll() {
     drawBoard();
-    drawEvalChart();
-    renderStatusBar();
+    if (State.showEval) drawEvalChart();
+    renderStatusTag();
     renderMoveList();
-    renderControls();
+    renderButtonStates();
     renderRuleHint();
-    renderTurnStone();
 }
 
-function renderStatusBar() {
-    $("statusRule").textContent = RULE_INFO[State.rule]?.name || "未知";
-    const turnEl = $("statusTurn");
-    if (State.gameOver) {
-        if (State.winner === 1) turnEl.textContent = "黑棋胜";
-        else if (State.winner === 2) turnEl.textContent = "白棋胜";
-        else turnEl.textContent = "平局";
-    } else {
-        turnEl.textContent = State.currentColor === 1 ? "黑棋" : "白棋";
-    }
-    $("statusStep").textContent = `${State.viewIndex}/${State.totalMoves}`;
-    $("statusMode").textContent = State.gameMode === "pve" ? "人机" : "双人";
-    const resultEl = $("statusResult");
-    if (State.gameOver) {
-        resultEl.classList.remove("hidden");
-        const isPlayerWin = State.winner === State.playerColor;
-        resultEl.textContent = isPlayerWin ? "玩家获胜！" : (State.winner === 0 ? "平局" : "AI 获胜");
-    } else { resultEl.classList.add("hidden"); }
-}
-
-function renderTurnStone() {
-    const stone = $("turnStone");
-    stone.style.background = State.currentColor === 1 ?
-        "radial-gradient(circle at 30% 30%, #5a5a5a, #0a0a0a)" :
-        "radial-gradient(circle at 30% 30%, #ffffff, #b0b0b0)";
+function renderStatusTag() {
+    const ruleName = RULE_INFO[State.rule]?.name || "未知";
+    const turn = State.gameOver ? (State.winner === 1 ? "黑胜" : State.winner === 2 ? "白胜" : "平局") : (State.currentColor === 1 ? "黑棋" : "白棋");
+    const mode = State.gameMode === "pve" ? "人机" : "双人";
+    $("statusTag").textContent = `${ruleName} · ${turn} · ${State.viewIndex}/${State.totalMoves} · ${mode}`;
 }
 
 function renderMoveList() {
     const list = $("moveList");
-    if (State.moves.length === 0) {
-        list.innerHTML = '<div class="empty-hint">尚未开始对局</div>';
-        return;
-    }
+    if (State.moves.length === 0) { list.innerHTML = '<div class="empty-hint">尚未开始对局</div>'; return; }
     let html = "";
     for (let i = 0; i < State.moves.length; i++) {
         const m = State.moves[i];
@@ -377,36 +305,26 @@ function renderMoveList() {
     if (current) current.scrollIntoView({ block: "nearest", behavior: "smooth" });
 }
 
-function renderControls() {
+// 关键修复：renderButtonStates 只更新按钮的 disabled 状态，不覆盖 active
+function renderButtonStates() {
     $("btnBack").disabled = State.viewIndex <= 0 || State.thinking;
     $("btnForward").disabled = State.viewIndex >= State.totalMoves || State.thinking;
     $("btnAiMove").disabled = State.gameOver || State.thinking;
-    document.querySelectorAll("#ruleControl button").forEach((b) => {
-        b.classList.toggle("active", parseInt(b.dataset.rule) === State.rule);
-    });
-    document.querySelectorAll("#colorControl button").forEach((b) => {
-        b.classList.toggle("active", parseInt(b.dataset.color) === State.playerColor);
-    });
-    document.querySelectorAll("#sizeControl button").forEach((b) => {
-        b.classList.toggle("active", parseInt(b.dataset.size) === State.boardSize);
-    });
-    document.querySelectorAll("#modeControl button").forEach((b) => {
-        b.classList.toggle("active", b.dataset.mode === State.gameMode);
-    });
+    // 注意：不覆盖 segmented 按钮的 active 状态，避免用户选择被重置
+    // 只更新 colorField 显示
     const colorField = $("colorField");
     if (colorField) colorField.style.display = State.gameMode === "pvp" ? "none" : "";
 }
 
 function renderRuleHint() {
     $("ruleHint").textContent = RULE_INFO[State.rule]?.desc || "";
-    $("modeHint").textContent = State.gameMode === "pve" ? "人机：AI 自动应招" : "双人：玩家轮流扮演黑白";
 }
 
 function setThinking(v) {
     if (State.gameMode === "pvp") v = false;
     if (State.gameOver) v = false;
     State.thinking = v;
-    renderControls();
+    renderButtonStates();
     if (v) setHint("引擎思考中…", "warn");
     else if (State.gameOver) {
         const wt = State.winner === 1 ? "黑棋胜" : State.winner === 2 ? "白棋胜" : "平局";
@@ -421,13 +339,12 @@ function setHint(text, type) {
     if (type) el.classList.add(type);
 }
 
-// ============= 控件事件 =============
+// ============= 控件事件（只更新 UI，不同步服务端）=============
 document.querySelectorAll("#modeControl button").forEach((b) => {
     b.addEventListener("click", () => {
         document.querySelectorAll("#modeControl button").forEach((x) => x.classList.remove("active"));
         b.classList.add("active");
         const mode = b.dataset.mode;
-        $("modeHint").textContent = mode === "pve" ? "人机：AI 自动应招" : "双人：玩家轮流扮演黑白";
         $("colorField").style.display = mode === "pvp" ? "none" : "";
     });
 });
@@ -451,6 +368,12 @@ document.querySelectorAll("#sizeControl button").forEach((b) => {
     });
 });
 
+// 评估曲线开关
+$("evalToggle").addEventListener("change", (e) => {
+    State.showEval = e.target.checked;
+    $("evalBody").style.display = State.showEval ? "" : "none";
+});
+
 $("btnNewGame").addEventListener("click", async () => {
     const rule = parseInt(document.querySelector("#ruleControl button.active").dataset.rule);
     const playerColor = parseInt(document.querySelector("#colorControl button.active").dataset.color);
@@ -459,20 +382,21 @@ $("btnNewGame").addEventListener("click", async () => {
     setThinking(true);
     try {
         const res = await API.post("/api/new_game", { rule, player_color: playerColor, board_size: boardSize, game_mode: gameMode });
-        if (res.ok) { updateFromServer(res.data); toast(`新对局：${RULE_INFO[rule].name} · ${gameMode === "pve" ? "人机" : "双人"}`, "success"); }
-        else toast(res.error || "新对局失败", "error");
+        if (res.ok) {
+            updateFromServer(res.data);
+            // 新对局后同步按钮状态
+            document.querySelectorAll("#ruleControl button").forEach((b) => { b.classList.toggle("active", parseInt(b.dataset.rule) === rule); });
+            document.querySelectorAll("#colorControl button").forEach((b) => { b.classList.toggle("active", parseInt(b.dataset.color) === playerColor); });
+            document.querySelectorAll("#sizeControl button").forEach((b) => { b.classList.toggle("active", parseInt(b.dataset.size) === boardSize); });
+            document.querySelectorAll("#modeControl button").forEach((b) => { b.classList.toggle("active", b.dataset.mode === gameMode); });
+            toast(`新对局：${RULE_INFO[rule].name} · ${gameMode === "pve" ? "人机" : "双人"}`, "success");
+        } else toast(res.error || "新对局失败", "error");
     } catch (err) { toast("网络错误: " + err.message, "error"); }
     finally { setThinking(false); }
 });
 
-$("btnBack").addEventListener("click", async () => {
-    const res = await API.post("/api/undo", {});
-    if (res.ok) updateFromServer(res.data);
-});
-$("btnForward").addEventListener("click", async () => {
-    const res = await API.post("/api/redo", {});
-    if (res.ok) updateFromServer(res.data);
-});
+$("btnBack").addEventListener("click", async () => { const res = await API.post("/api/undo", {}); if (res.ok) updateFromServer(res.data); });
+$("btnForward").addEventListener("click", async () => { const res = await API.post("/api/redo", {}); if (res.ok) updateFromServer(res.data); });
 $("btnAiMove").addEventListener("click", async () => {
     if (State.thinking) return;
     setThinking(true);
@@ -484,18 +408,35 @@ $("btnAiMove").addEventListener("click", async () => {
     finally { setThinking(false); }
 });
 
-async function jumpTo(index) {
-    const res = await API.post("/api/jump", { index });
-    if (res.ok) updateFromServer(res.data);
+async function jumpTo(index) { const res = await API.post("/api/jump", { index }); if (res.ok) updateFromServer(res.data); }
+
+// ============= 引擎参数页面 =============
+async function loadEnginesForSettings() {
+    try {
+        const res = await API.get("/api/engines");
+        if (res.ok) {
+            const select = $("cfgArch");
+            const current = select.value || "auto";
+            select.innerHTML = '<option value="auto">自动选择</option>';
+            res.data.engines.filter(e => e.available).forEach(e => {
+                const opt = document.createElement("option");
+                opt.value = e.arch;
+                opt.textContent = e.arch_label;
+                select.appendChild(opt);
+            });
+            select.value = current;
+        }
+    } catch (e) {}
 }
 
-// ============= 设置弹窗 =============
 $("btnSettings").addEventListener("click", async () => {
+    await loadEnginesForSettings();
     const res = await API.get("/api/config");
     if (res.ok) {
         $("cfgTimeout").value = res.data.timeout_turn;
         $("cfgThreads").value = res.data.thread_num;
         $("cfgMemory").value = res.data.max_memory;
+        $("cfgArch").value = res.data.arch_setting || "auto";
         $("cfgEngineInfo").textContent =
             `引擎: ${res.data.engine_path || "未启动"}\n` +
             `架构: ${res.data.engine_arch_label || "未启动"}\n` +
@@ -506,17 +447,26 @@ $("btnSettings").addEventListener("click", async () => {
     }
     $("settingsModal").classList.remove("hidden");
 });
+
 $("closeSettings").addEventListener("click", () => $("settingsModal").classList.add("hidden"));
 $("cancelSettings").addEventListener("click", () => $("settingsModal").classList.add("hidden"));
 $("settingsModal").addEventListener("click", (e) => { if (e.target === $("settingsModal")) $("settingsModal").classList.add("hidden"); });
+
 $("saveSettings").addEventListener("click", async () => {
     const res = await API.post("/api/config", {
         timeout_turn: parseInt($("cfgTimeout").value),
         thread_num: parseInt($("cfgThreads").value),
         max_memory: parseInt($("cfgMemory").value),
     });
-    if (res.ok) { toast("设置已保存", "success"); $("settingsModal").classList.add("hidden"); }
-    else toast(res.error || "保存失败", "error");
+    if (res.ok) {
+        // 切换架构
+        const arch = $("cfgArch").value;
+        if (arch && arch !== "auto") {
+            await API.post("/api/architecture", { arch });
+        }
+        toast("参数已保存", "success");
+        $("settingsModal").classList.add("hidden");
+    } else toast(res.error || "保存失败", "error");
 });
 
 // ============= 轮询 =============
@@ -544,7 +494,7 @@ function toast(msg, type) {
 }
 
 // ============= 初始化 =============
-window.addEventListener("resize", () => { resizeCanvas(); drawEvalChart(); });
+window.addEventListener("resize", () => { resizeCanvas(); if (State.showEval) drawEvalChart(); });
 
 async function init() {
     try {
@@ -552,10 +502,9 @@ async function init() {
         if (res.ok) updateFromServer(res.data);
     } catch (e) { toast("无法连接服务器", "error"); }
     resizeCanvas();
-    // 评估曲线 canvas 适配
     const evalRect = evalCanvas.getBoundingClientRect();
     evalCanvas.width = evalRect.width;
-    evalCanvas.height = 150;
+    evalCanvas.height = 120;
     renderAll();
 }
 init();

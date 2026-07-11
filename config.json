@@ -10,8 +10,12 @@
         "mode": "pve"
     },
     "rules": {
-        "freestyle": { "model": "mix9svqfreestyle_bsmix.bin.lz4" },
-        "standard": { "model": "mix9svqstandard_bs15.bin.lz4" },
+        "freestyle": {
+            "model": "mix9svqfreestyle_bsmix.bin.lz4"
+        },
+        "standard": {
+            "model": "mix9svqstandard_bs15.bin.lz4"
+        },
         "renju": {
             "model_black": "mix9svqrenju_bs15_black.bin.lz4",
             "model_white": "mix9svqrenju_bs15_white.bin.lz4"
