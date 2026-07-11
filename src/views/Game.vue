@@ -300,15 +300,13 @@
     </div>
 
     <div v-transfer-dom>
-      <x-dialog v-model="showLoading" hide-on-blur>
-        <div style="margin:20px auto;">{{ $t('game.engineLoading') }}</div>
+      <x-dialog v-model="showLoading" hide-on-blur class="loading-dialog">
+        <div class="loading-title">{{ $t('game.engineLoading') }}</div>
         <x-circle style="width: 100px;height: 100px;margin: 20px auto;" :percent="loadingProgress * 100"
-          :stroke-width="6" :trail-width="6">
-          <span style="color:#36D1DC">{{ Math.floor(loadingProgress * 10000) / 100 }}%</span>
+          :stroke-width="6" :trail-width="6" stroke-color="#0061a4">
+          <span class="loading-percent">{{ Math.floor(loadingProgress * 10000) / 100 }}%</span>
         </x-circle>
-        <div style="margin:10px auto;" @click="showLoading = false">
-          <span class="vux-close"></span>
-        </div>
+        <button class="loading-close-btn" @click="showLoading = false">{{ $t('common.cancel') || 'Close' }}</button>
       </x-dialog>
     </div>
   </div>

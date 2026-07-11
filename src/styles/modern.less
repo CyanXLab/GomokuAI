@@ -183,13 +183,21 @@ canvas, .board, .board * { transition: none !important; }
   margin-top: 4px !important;
 }
 
-/* ===== Switch (M3) ===== */
+/* ===== Switch (M3) - fixed alignment ===== */
 .weui-switch, .weui-switch-cp__box {
   background-color: var(--color-text-tertiary) !important;
-  width: 44px !important; height: 24px !important;
+  width: 44px !important;
+  height: 24px !important;
   border-radius: var(--radius-full) !important;
   border: 2px solid var(--color-text-tertiary) !important;
   position: relative !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  margin: 0 !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  outline: none !important;
+  box-sizing: border-box !important;
 }
 .weui-switch:checked,
 .weui-switch-cp__input:checked + .weui-switch-cp__box {
@@ -197,14 +205,35 @@ canvas, .board, .board * { transition: none !important; }
   border-color: var(--color-accent) !important;
 }
 .weui-switch::after, .weui-switch-cp__box::after {
-  width: 18px !important; height: 18px !important;
-  top: 1px !important; left: 1px !important;
-  border-radius: 50% !important; background: #fff !important;
+  content: '' !important;
+  position: absolute !important;
+  width: 18px !important;
+  height: 18px !important;
+  top: 50% !important;
+  left: 3px !important;
+  transform: translateY(-50%) !important;
+  -webkit-transform: translateY(-50%) !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  transition: transform 0.2s ease, left 0.2s ease !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+  margin: 0 !important;
 }
 .weui-switch:checked::after,
 .weui-switch-cp__input:checked + .weui-switch-cp__box::after {
-  transform: translateX(20px) !important;
-  -webkit-transform: translateX(20px) !important;
+  left: 23px !important;
+  transform: translateY(-50%) !important;
+  -webkit-transform: translateY(-50%) !important;
+}
+.weui-switch-cp__input {
+  position: absolute !important;
+  width: 44px !important;
+  height: 24px !important;
+  opacity: 0 !important;
+}
+.weui-cell__ft {
+  display: flex !important;
+  align-items: center !important;
 }
 
 /* ===== Radio ===== */
@@ -295,17 +324,30 @@ canvas, .board, .board * { transition: none !important; }
 .weui-cells_radio .weui-cell__bd { color: var(--color-text-primary) !important; }
 .weui-cells_radio .weui-cell__ft { color: var(--color-text-secondary) !important; }
 
-/* ===== Actionsheet ===== */
+/* ===== Actionsheet - centered, hidden by default ===== */
 .weui-actionsheet {
   background: var(--color-bg-elevated) !important;
   border-radius: var(--radius-lg) !important;
   position: fixed !important;
-  left: 50% !important; top: 50% !important; bottom: auto !important;
+  left: 50% !important;
+  top: 50% !important;
+  bottom: auto !important;
   transform: translate(-50%, -50%) !important;
   -webkit-transform: translate(-50%, -50%) !important;
-  width: 85% !important; max-width: 360px !important;
+  width: 85% !important;
+  max-width: 360px !important;
+  /* CRITICAL: hidden by default */
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: opacity 0.25s ease, visibility 0.25s ease !important;
+  z-index: 5000 !important;
 }
+/* Only show when toggle class is present */
 .weui-actionsheet_toggle {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
   transform: translate(-50%, -50%) !important;
   -webkit-transform: translate(-50%, -50%) !important;
 }
@@ -316,7 +358,17 @@ canvas, .board, .board * { transition: none !important; }
 .weui-actionsheet__cell:active { background: var(--color-bg-active) !important; }
 .weui-actionsheet__action { margin-top: 0 !important; }
 .weui-actionsheet__action .weui-actionsheet__cell { color: var(--color-accent) !important; }
-.weui-mask { background: rgba(0,0,0,0.5) !important; }
+.weui-mask {
+  background: rgba(0,0,0,0.5) !important;
+  /* hidden by default */
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transition: opacity 0.25s ease, visibility 0.25s ease !important;
+}
+.weui-mask_show {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
 
 /* ===== Dialog ===== */
 .weui-dialog {
@@ -368,19 +420,31 @@ canvas, .board, .board * { transition: none !important; }
 .theme-segment-item.active { background: var(--color-bg-elevated); color: var(--color-accent); box-shadow: var(--shadow-sm); }
 .theme-segment-item .fa { margin-right: 4px; font-size: 11px; }
 
-/* ===== Chart (v-chart/F2) ===== */
+/* ===== Chart - force dark mode ===== */
 .v-chart { background: transparent !important; }
 .v-chart canvas { background: transparent !important; }
 .chart-container { background: transparent !important; }
 .chart-group .weui-cells { background: var(--color-bg-card) !important; }
-/* Dark mode: invert chart canvas so white bg becomes dark, text becomes light */
+.chart-group { background: var(--color-bg-card) !important; }
+
+/* Dark mode: invert ALL canvas inside chart-group */
+[data-theme='dark'] .chart-group canvas,
 [data-theme='dark'] .v-chart canvas,
-[data-theme='dark'] .chart-container canvas {
-  filter: invert(0.92) hue-rotate(180deg) brightness(0.9) contrast(0.95);
+[data-theme='dark'] .chart-container canvas,
+[data-theme='dark'] group canvas,
+[data-theme='dark'] .weui-cells canvas {
+  filter: invert(0.94) hue-rotate(180deg) brightness(0.92) contrast(1.1) !important;
   background: transparent !important;
 }
-/* Light mode: keep chart readable */
-.v-chart canvas { background: transparent !important; }
+[data-theme='dark'] .chart-group .weui-cells__group-title {
+  color: var(--color-text-secondary) !important;
+}
+
+/* Ensure chart parent group has dark bg in dark mode */
+[data-theme='dark'] .chart-group .weui-cells,
+[data-theme='dark'] group .weui-cells {
+  background: var(--color-bg-card) !important;
+}
 
 /* ===== Load-more / Scroller ===== */
 .load-more { background: transparent !important; }
@@ -439,3 +503,44 @@ canvas, .board, .board * { transition: none !important; }
 
 /* ===== Screenshot box ===== */
 .screenshot-box { background-color: var(--color-bg-card) !important; }
+
+
+/* ===== Loading dialog ===== */
+.loading-dialog .weui-dialog {
+  background: var(--color-bg-elevated) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 20px !important;
+  max-width: 320px !important;
+  width: 85% !important;
+}
+.loading-title {
+  color: var(--color-text-primary) !important;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 10px auto !important;
+  text-align: center;
+}
+.loading-percent {
+  color: var(--color-accent) !important;
+  font-size: 18px;
+  font-weight: 700;
+}
+.loading-close-btn {
+  display: block;
+  margin: 15px auto 5px !important;
+  padding: 8px 24px;
+  background: var(--color-bg-hover) !important;
+  color: var(--color-accent) !important;
+  border: none !important;
+  border-radius: var(--radius-full) !important;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.loading-close-btn:active {
+  background: var(--color-bg-active) !important;
+  transform: scale(0.95);
+}
+.loading-dialog .weui-circle__trail { stroke: var(--color-bg-hover) !important; }
+.vux-close { color: var(--color-text-secondary) !important; }
