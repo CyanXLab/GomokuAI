@@ -1,120 +1,92 @@
 /**
  * GomokuAI Modern UI - Material Design 3 inspired.
- * Comprehensive light/dark theme with full component coverage.
+ * Complete light/dark theme coverage for ALL components.
  */
 
 :root {
-  /* ===== Light theme ===== */
   --color-bg: #f7f7fa;
   --color-bg-elevated: #ffffff;
   --color-bg-card: #ffffff;
-  --color-bg-hover: rgba(0, 0, 0, 0.05);
-  --color-bg-active: rgba(0, 0, 0, 0.1);
+  --color-bg-hover: rgba(0,0,0,0.05);
+  --color-bg-active: rgba(0,0,0,0.1);
   --color-bg-surface: #ffffff;
-
-  --color-header-bg: rgba(255, 255, 255, 0.85);
-  --color-header-border: rgba(0, 0, 0, 0.06);
+  --color-header-bg: rgba(255,255,255,0.88);
+  --color-header-border: rgba(0,0,0,0.06);
   --color-header-text: #1c1b1f;
-
-  --color-tabbar-bg: rgba(255, 255, 255, 0.92);
-  --color-tabbar-border: rgba(0, 0, 0, 0.06);
-  --color-tabbar-text: #6b6b70;
-  --color-tabbar-text-active: #0061a4;
-
   --color-text-primary: #1c1b1f;
   --color-text-secondary: #49454f;
   --color-text-tertiary: #79747e;
   --color-text-on-accent: #ffffff;
-  --color-text-on-surface-variant: #49454f;
-
   --color-accent: #0061a4;
   --color-accent-hover: #004e8a;
   --color-accent-pressed: #003d6e;
-  --color-accent-soft: rgba(0, 97, 164, 0.1);
-  --color-accent-container: #d2e6ff;
-
-  --color-border: rgba(0, 0, 0, 0.08);
-  --color-border-strong: rgba(0, 0, 0, 0.14);
-  --color-divider: rgba(0, 0, 0, 0.06);
-
+  --color-accent-soft: rgba(0,97,164,0.1);
+  --color-border: rgba(0,0,0,0.08);
+  --color-border-strong: rgba(0,0,0,0.14);
+  --color-divider: rgba(0,0,0,0.06);
   --color-success: #006e2c;
   --color-warning: #b26500;
   --color-error: #ba1a1a;
   --color-info: #0061a4;
-
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.07);
-  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.14);
-
+  --color-board-bg: #F4D03F;
+  --color-board-line: #000000;
+  --color-board-coord: #000000;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.07);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.14);
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
-  --radius-xl: 24px;
   --radius-full: 999px;
-
   --blur-acrylic: saturate(180%) blur(20px);
-
-  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 0.15s cubic-bezier(0.4,0,0.2,1);
+  --transition-normal: 0.25s cubic-bezier(0.4,0,0.2,1);
 }
 
 [data-theme='dark'] {
   --color-bg: #141218;
   --color-bg-elevated: #211f26;
   --color-bg-card: #211f26;
-  --color-bg-hover: rgba(255, 255, 255, 0.07);
-  --color-bg-active: rgba(255, 255, 255, 0.12);
+  --color-bg-hover: rgba(255,255,255,0.07);
+  --color-bg-active: rgba(255,255,255,0.12);
   --color-bg-surface: #2b2930;
-
-  --color-header-bg: rgba(20, 18, 24, 0.85);
-  --color-header-border: rgba(255, 255, 255, 0.08);
+  --color-header-bg: rgba(20,18,24,0.88);
+  --color-header-border: rgba(255,255,255,0.08);
   --color-header-text: #e6e1e9;
-
-  --color-tabbar-bg: rgba(20, 18, 24, 0.92);
-  --color-tabbar-border: rgba(255, 255, 255, 0.08);
-  --color-tabbar-text: #c9c5ca;
-  --color-tabbar-text-active: #9ecaff;
-
   --color-text-primary: #e6e1e9;
   --color-text-secondary: #cac4d0;
   --color-text-tertiary: #938f99;
   --color-text-on-accent: #ffffff;
-  --color-text-on-surface-variant: #cac4d0;
-
   --color-accent: #9ecaff;
   --color-accent-hover: #b4d8ff;
   --color-accent-pressed: #86c2ff;
-  --color-accent-soft: rgba(158, 202, 255, 0.15);
-  --color-accent-container: #004e8a;
-
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-strong: rgba(255, 255, 255, 0.16);
-  --color-divider: rgba(255, 255, 255, 0.08);
-
+  --color-accent-soft: rgba(158,202,255,0.15);
+  --color-border: rgba(255,255,255,0.08);
+  --color-border-strong: rgba(255,255,255,0.16);
+  --color-divider: rgba(255,255,255,0.08);
   --color-success: #7fd99a;
   --color-warning: #ffc480;
   --color-error: #ffb4ab;
   --color-info: #9ecaff;
-
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --color-board-bg: #3d3530;
+  --color-board-line: #c9c5ca;
+  --color-board-coord: #c9c5ca;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.5);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.5);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.6);
 }
 
-/* ===== Global resets ===== */
+/* ===== Global ===== */
 html { scroll-behavior: smooth; }
-
 body {
   background-color: var(--color-bg) !important;
   transition: background-color var(--transition-normal), color var(--transition-normal);
 }
-
 *, *::before, *::after {
   transition-property: background-color, border-color, color, box-shadow;
   transition-duration: var(--transition-normal);
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-timing-function: cubic-bezier(0.4,0,0.2,1);
 }
-
 canvas, .board, .board * { transition: none !important; }
 
 /* ===== Header ===== */
@@ -124,42 +96,35 @@ canvas, .board, .board * { transition: none !important; }
   -webkit-backdrop-filter: var(--blur-acrylic);
   border-bottom: 1px solid var(--color-header-border) !important;
   color: var(--color-header-text) !important;
+  height: 48px !important;
+  padding: 0 !important;
 }
-.header-bar .vux-header-title { color: var(--color-header-text) !important; font-weight: 600 !important; }
+.header-bar .vux-header-title { color: var(--color-header-text) !important; font-weight: 600 !important; font-size: 16px !important; }
 .header-bar .vux-header-title span { color: var(--color-header-text) !important; }
 
-/* ===== Tabbar - Material 3 Navigation Bar ===== */
-.app-tabber {
-  background: var(--color-tabbar-bg) !important;
-  backdrop-filter: var(--blur-acrylic);
-  -webkit-backdrop-filter: var(--blur-acrylic);
-  border-top: 1px solid var(--color-tabbar-border) !important;
-  box-shadow: 0 -1px 8px rgba(0,0,0,0.04) !important;
-  height: 56px !important;
+/* Header nav icons */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
 }
-.app-tabber .weui-tabbar__item {
-  padding: 4px 0 8px !important;
-  transition: all var(--transition-fast) !important;
+.nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--color-text-secondary) !important;
 }
-.app-tabber .weui-tabbar__item:active { background: transparent !important; }
-.app-tabber .weui-tabbar__icon { width: 24px !important; height: 24px !important; }
-.app-tabber .weui-tabbar__label {
-  color: var(--color-tabbar-text) !important;
-  font-size: 11px !important;
-  font-weight: 500 !important;
-  margin-top: 2px !important;
-}
-.app-tabber .weui-tabbar__item.weui-bar__item_on .weui-tabbar__label,
-.app-tabber .weui-tabbar__item.tabbar-item-selected .weui-tabbar__label {
-  color: var(--color-tabbar-text-active) !important;
-}
-.app-tabber .weui-tabbar__item.weui-bar__item_on svg,
-.app-tabber .weui-tabbar__item.tabbar-item-selected svg {
-  fill: var(--color-tabbar-text-active) !important;
-}
-.app-tabber svg { fill: var(--color-tabbar-text) !important; transition: fill var(--transition-fast) !important; }
+.nav-icon i { font-size: 15px; }
+.nav-icon:hover { background: var(--color-bg-hover); color: var(--color-text-primary) !important; }
+.nav-icon:active { background: var(--color-bg-active); transform: scale(0.92); }
+.nav-icon.active { color: var(--color-accent) !important; background: var(--color-accent-soft); }
 
-/* ===== Vux cells/cards ===== */
+/* ===== Cells/Cards ===== */
 .weui-cells {
   background: var(--color-bg-card) !important;
   border-radius: var(--radius-md) !important;
@@ -176,7 +141,6 @@ canvas, .board, .board * { transition: none !important; }
 .weui-cell:last-child { border-bottom: none !important; }
 .weui-cell__bd, .weui-cell__bd p { color: var(--color-text-primary) !important; }
 .weui-cell__ft { color: var(--color-text-secondary) !important; }
-
 .weui-cells__group-title {
   color: var(--color-text-tertiary) !important;
   font-size: 12px !important;
@@ -194,23 +158,41 @@ canvas, .board, .board * { transition: none !important; }
   height: 24px !important;
   border-radius: var(--radius-full) !important;
   border: 2px solid var(--color-text-tertiary) !important;
+  position: relative !important;
 }
 .weui-switch:checked,
 .weui-switch-cp__input:checked + .weui-switch-cp__box {
   background-color: var(--color-accent) !important;
   border-color: var(--color-accent) !important;
 }
+/* Fix switch knob alignment */
+.weui-switch::after,
+.weui-switch-cp__box::after {
+  width: 18px !important;
+  height: 18px !important;
+  top: 1px !important;
+  left: 1px !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+}
+.weui-switch:checked::after,
+.weui-switch-cp__input:checked + .weui-switch-cp__box::after {
+  transform: translateX(20px) !important;
+  -webkit-transform: translateX(20px) !important;
+}
 
 /* ===== Radio ===== */
 .weui-cells_radio .weui-check:checked + .weui-icon-checked { color: var(--color-accent) !important; }
 .weui-cells_radio .weui-cell__bd { color: var(--color-text-primary) !important; }
+.weui-icon-checked { color: var(--color-text-tertiary) !important; }
 
 /* ===== Number input ===== */
 .weui-cell__ft .vux-number-round .vux-number-input {
   color: var(--color-text-primary) !important;
-  background: var(--color-bg-elevated) !important;
+  background: var(--color-bg-surface) !important;
   border: 1px solid var(--color-border-strong) !important;
   border-radius: var(--radius-sm) !important;
+  text-align: center !important;
 }
 .vux-number-round .vux-number-selector {
   background: var(--color-accent) !important;
@@ -219,14 +201,14 @@ canvas, .board, .board * { transition: none !important; }
   width: 22px !important; height: 22px !important;
   display: flex !important; align-items: center !important; justify-content: center !important;
   color: #fff !important; box-shadow: var(--shadow-sm) !important;
+  border: none !important;
 }
 .vux-number-round .vux-number-selector svg { fill: #fff !important; }
-.vux-number-round .vux-number-selector:active {
-  transform: scale(0.92);
-  background: var(--color-accent-pressed) !important;
-}
+.vux-number-round .vux-number-selector:active { transform: scale(0.92); background: var(--color-accent-pressed) !important; }
+.vux-number-round .vux-number-selector-plus { margin-left: 4px !important; }
+.vux-number-round .vux-number-selector-sub { margin-right: 4px !important; }
 
-/* ===== Buttons (M3 filled style) ===== */
+/* ===== Buttons ===== */
 .weui-btn {
   border-radius: var(--radius-full) !important;
   font-weight: 500 !important;
@@ -238,11 +220,11 @@ canvas, .board, .board * { transition: none !important; }
   font-size: 14px !important;
 }
 .weui-btn:active { transform: scale(0.97); }
-.weui-btn_primary { background-color: var(--color-accent) !important; }
+.weui-btn_primary { background-color: var(--color-accent) !important; color: var(--color-text-on-accent) !important; }
 .weui-btn_primary:active { background-color: var(--color-accent-pressed) !important; }
 .weui-btn_warn { background-color: var(--color-error) !important; }
 
-/* Small icon buttons (game toolbar) */
+/* Game toolbar buttons */
 .button-box .weui-btn {
   height: 40px !important;
   line-height: 40px !important;
@@ -252,89 +234,95 @@ canvas, .board, .board * { transition: none !important; }
   border: 1px solid var(--color-border) !important;
   box-shadow: var(--shadow-sm) !important;
 }
-.button-box .weui-btn:active {
-  background: var(--color-bg-active) !important;
-  transform: scale(0.95);
-}
+.button-box .weui-btn:active { background: var(--color-bg-active) !important; transform: scale(0.95); }
 .button-box .weui-btn i { color: var(--color-text-secondary) !important; }
 .button-box .weui-btn:active i { color: var(--color-accent) !important; }
 
-/* ===== Tables (eval info) ===== */
-.x-table, table {
-  background: var(--color-bg-card) !important;
-  color: var(--color-text-primary) !important;
-}
+/* ===== Tables ===== */
+.x-table, table { background: var(--color-bg-card) !important; color: var(--color-text-primary) !important; }
 .x-table th, table th {
   background: var(--color-bg-hover) !important;
   color: var(--color-text-secondary) !important;
   border-bottom: 1px solid var(--color-border) !important;
+  font-weight: 600 !important;
 }
 .x-table td, table td {
   color: var(--color-text-primary) !important;
   border-bottom: 1px solid var(--color-divider) !important;
 }
 
-/* ===== Textarea (position code) ===== */
+/* ===== Textarea ===== */
 .weui-textarea {
   color: var(--color-text-primary) !important;
   background: transparent !important;
 }
 .weui-textarea::placeholder { color: var(--color-text-tertiary) !important; }
 
-/* ===== Popup dialog ===== */
+/* ===== Popup (popup-radio dropdown) ===== */
+.vux-popup-dialog {
+  background: var(--color-bg-elevated) !important;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+}
+.vux-popup-header {
+  background: var(--color-bg-elevated) !important;
+  color: var(--color-text-primary) !important;
+  border-bottom: 1px solid var(--color-divider) !important;
+}
+.vux-popup-header .vux-popup-header-right { color: var(--color-accent) !important; }
+.vux-popup-header .vux-popup-header-left { color: var(--color-text-secondary) !important; }
+
+/* Popup-radio selector list */
+.weui-cells_radio {
+  background: var(--color-bg-elevated) !important;
+}
+.weui-cells_radio .weui-cell__bd { color: var(--color-text-primary) !important; }
+.weui-cells_radio .weui-cell__ft { color: var(--color-text-secondary) !important; }
+
+/* ===== Actionsheet (bottom popup for balance/flip/move) ===== */
+.weui-actionsheet {
+  background: var(--color-bg-elevated) !important;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+}
+.weui-actionsheet__cell {
+  color: var(--color-text-primary) !important;
+  background: var(--color-bg-elevated) !important;
+}
+.weui-actionsheet__cell:active { background: var(--color-bg-active) !important; }
+.weui-actionsheet__action { margin-top: 8px !important; }
+.weui-actionsheet__action .weui-actionsheet__cell { color: var(--color-accent) !important; }
+
+/* Actionsheet mask */
+.weui-mask { background: rgba(0,0,0,0.5) !important; }
+
+/* ===== Dialog (confirm/alert) ===== */
 .weui-dialog {
   background: var(--color-bg-elevated) !important;
   border-radius: var(--radius-lg) !important;
   box-shadow: var(--shadow-lg) !important;
   overflow: hidden;
+  max-width: 320px !important;
+  width: 85% !important;
 }
 .weui-dialog__title { color: var(--color-text-primary) !important; font-weight: 600 !important; }
 .weui-dialog__bd { color: var(--color-text-secondary) !important; }
 .weui-dialog__btn { color: var(--color-accent) !important; font-weight: 600 !important; }
 .weui-dialog__btn_default { color: var(--color-text-secondary) !important; }
-
-/* ===== Actionsheet ===== */
-.weui-actionsheet {
-  background: var(--color-bg-elevated) !important;
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
-}
-.weui-actionsheet__cell { color: var(--color-text-primary) !important; }
-.weui-actionsheet__action { margin-top: 8px !important; }
+.weui-dialog__ft { border-top: 1px solid var(--color-divider) !important; }
 
 /* ===== Drawer ===== */
 .drawer { background: var(--color-bg-elevated) !important; }
 .drawer p { color: var(--color-text-primary) !important; }
 
 /* ===== Toast ===== */
-.weui-toast {
-  background: var(--color-bg-elevated) !important;
-  color: var(--color-text-primary) !important;
-  border-radius: var(--radius-md) !important;
-  box-shadow: var(--shadow-lg) !important;
-}
+.weui-toast { background: var(--color-bg-elevated) !important; color: var(--color-text-primary) !important; border-radius: var(--radius-md) !important; box-shadow: var(--shadow-lg) !important; }
 
-/* ===== Markdown body (About) ===== */
-.markdown-body {
-  color: var(--color-text-primary) !important;
-  background: transparent !important;
-}
-.markdown-body h2, .markdown-body h3, .markdown-body h4 {
-  color: var(--color-text-primary) !important;
-  border-bottom-color: var(--color-divider) !important;
-}
+/* ===== Markdown (About) ===== */
+.markdown-body { color: var(--color-text-primary) !important; background: transparent !important; }
+.markdown-body h2, .markdown-body h3, .markdown-body h4 { color: var(--color-text-primary) !important; border-bottom-color: var(--color-divider) !important; }
 .markdown-body a { color: var(--color-accent) !important; }
-.markdown-body code {
-  background: var(--color-bg-hover) !important;
-  color: var(--color-text-primary) !important;
-  border-radius: var(--radius-sm) !important;
-}
-.markdown-body blockquote {
-  color: var(--color-text-secondary) !important;
-  border-left-color: var(--color-accent) !important;
-}
-.markdown-body ul li { color: var(--color-text-primary) !important; }
-.markdown-body p { color: var(--color-text-primary) !important; }
-.markdown-body strong { color: var(--color-text-primary) !important; }
+.markdown-body code { background: var(--color-bg-hover) !important; color: var(--color-text-primary) !important; border-radius: var(--radius-sm) !important; }
+.markdown-body blockquote { color: var(--color-text-secondary) !important; border-left-color: var(--color-accent) !important; }
+.markdown-body ul li, .markdown-body p, .markdown-body strong { color: var(--color-text-primary) !important; }
 
 /* ===== Scrollbar ===== */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -342,7 +330,7 @@ canvas, .board, .board * { transition: none !important; }
 ::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-text-tertiary); }
 
-/* ===== Theme switcher (compact, inline) ===== */
+/* ===== Theme switcher ===== */
 .theme-segment {
   display: inline-flex;
   background: var(--color-bg-hover);
@@ -363,18 +351,105 @@ canvas, .board, .board * { transition: none !important; }
   white-space: nowrap;
 }
 .theme-segment-item:hover { color: var(--color-text-primary); }
-.theme-segment-item.active {
-  background: var(--color-bg-elevated);
-  color: var(--color-accent);
-  box-shadow: var(--shadow-sm);
-}
+.theme-segment-item.active { background: var(--color-bg-elevated); color: var(--color-accent); box-shadow: var(--shadow-sm); }
 .theme-segment-item .fa { margin-right: 4px; font-size: 11px; }
 
 /* ===== Chart (v-chart) dark mode ===== */
+.v-chart { background: transparent !important; }
 [data-theme='dark'] .v-chart canvas { filter: invert(0.92) hue-rotate(180deg); }
 
-/* ===== Load-more separator ===== */
+/* ===== Load-more / Scroller ===== */
 .load-more { background: transparent !important; }
-
-/* ===== Scroller ===== */
 .scroller { background: transparent !important; }
+
+/* ===== Color picker input ===== */
+.weui-cell input[type="color"] {
+  width: 40px;
+  height: 28px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-surface);
+  cursor: pointer;
+  padding: 2px;
+}
+
+/* ===== X-Progress ===== */
+.weui-progress__bar { background: var(--color-bg-hover) !important; }
+.weui-progress__inner-bar { background-color: var(--color-accent) !important; }
+
+/* ===== Scroller horizontal (game toolbar) ===== */
+.scroller-horizontal { background: transparent !important; }
+
+/* ===== Flexbox ===== */
+.vux-flexbox { background: transparent !important; }
+
+/* ===== Cell access arrow ===== */
+.weui-cell_access .weui-cell__ft::after { border-color: var(--color-text-tertiary) !important; }
+
+/* ===== Popup-picker ===== */
+.vux-cell-box { color: var(--color-text-primary) !important; }
+.vux-cell-box .weui-cell__bd { color: var(--color-text-primary) !important; }
+.vux-cell-value { color: var(--color-text-secondary) !important; }
+
+/* ===== Box component ===== */
+.vux-x-button { background: transparent !important; }
+
+/* ===== No tabbar padding needed ===== */
+.weui-tab__panel { padding-bottom: 0 !important; }
+
+/* ===== Router view ===== */
+.router-view { background: transparent !important; }
+
+
+/* ===== Center popups (actionsheet + popup-radio) ===== */
+/* Move actionsheet from bottom to center */
+.weui-actionsheet {
+  position: fixed !important;
+  left: 50% !important;
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translate(-50%, -50%) !important;
+  -webkit-transform: translate(-50%, -50%) !important;
+  width: 85% !important;
+  max-width: 360px !important;
+  border-radius: var(--radius-lg) !important;
+  transition: transform 0.3s ease, opacity 0.3s ease !important;
+}
+.weui-actionsheet_toggle {
+  transform: translate(-50%, -50%) !important;
+  -webkit-transform: translate(-50%, -50%) !important;
+}
+/* Remove the action gap when centered */
+.weui-actionsheet__action { margin-top: 0 !important; }
+
+/* Center popup-radio dialog */
+.vux-popup-dialog.vux-popup-show {
+  bottom: 0 !important;
+}
+.vux-popup-dialog {
+  background: var(--color-bg-elevated) !important;
+}
+
+/* Popup-radio: make it slide from center */
+.vux-popup-header {
+  background: var(--color-bg-elevated) !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* Make the popup-radio appear as centered card */
+.weui-popup__container {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.weui-popup__modal {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  bottom: auto !important;
+  width: 85% !important;
+  max-width: 360px !important;
+  border-radius: var(--radius-lg) !important;
+  transform: none !important;
+  -webkit-transform: none !important;
+}

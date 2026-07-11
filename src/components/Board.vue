@@ -54,8 +54,13 @@ function fillCircle(ctx, x, y, r) {
 
 function drawBackground(ctx, style, w, h, noShadow) {
   // Resolve empty colors based on current theme
-  if (!style.lineColor) style.lineColor = document.documentElement.getAttribute('data-theme') === 'dark' ? '#cccccc' : '#000000'
-  if (!style.coordColor) style.coordColor = document.documentElement.getAttribute('data-theme') === 'dark' ? '#cccccc' : '#000000'
+  var isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+  if (!style.lineColor) style.lineColor = isDark ? '#c9c5ca' : '#000000'
+  if (!style.coordColor) style.coordColor = isDark ? '#c9c5ca' : '#000000'
+  // In dark mode, darken the default bright board color
+  if (isDark && style.boardColor && style.boardColor.toUpperCase() === '#F4D03F') {
+    style.boardColor = '#3d3530'
+  }
   ctx.save()
   if (!noShadow) {
     ctx.shadowOffsetX = ctx.shadowOffsetY = 2

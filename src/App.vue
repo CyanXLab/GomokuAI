@@ -1,7 +1,7 @@
 <template>
   <div id="app" style="height: 100%">
     <drawer :show.sync="drawerOpen" show-mode="overlay" placement="right" :drawer-style="{
-      'background-color': 'rgba(255,255,255,1.0)',
+      'background-color': 'var(--color-bg-elevated)',
       width: 'min(75%, 600px)',
       height: '100%',
     }">
@@ -12,40 +12,31 @@
         </div>
       </div>
 
-      <view-box ref="viewBox" :body-padding-top="showHeader ? '46px' : '0'" body-padding-bottom="50px">
-        <!-- header content -->
+      <view-box ref="viewBox" :body-padding-top="showHeader ? '48px' : '0'" body-padding-bottom="0">
+        <!-- header content with nav icons -->
         <x-header v-if="showHeader" slot="header" class="header-bar" :left-options="{ showBack: false }"
-          :right-options="{ showMore: false }" @on-click-more="showMessages">
+          :right-options="{ showMore: false }">
           {{ $t('appName') }}
-          <a v-if="route.path !== '/settings' && route.path !== '/about'" slot="right" class="needsclick"
-            @click="showMessages">
-            <i class="fa fa-list fa-lg" aria-hidden="true" style="color: #d6eaf8"></i>
-          </a>
+          <div slot="right" class="header-nav">
+            <a class="nav-icon" :class="{active: route.path === '/'}" @click="$router.push('/')" :title="$t('tabbar.game')">
+              <i class="fa fa-th-large" aria-hidden="true"></i>
+            </a>
+            <a class="nav-icon" :class="{active: route.path === '/settings'}" @click="$router.push('/settings')" :title="$t('tabbar.settings')">
+              <i class="fa fa-cog" aria-hidden="true"></i>
+            </a>
+            <a class="nav-icon" :class="{active: route.path === '/about'}" @click="$router.push('/about')" :title="$t('tabbar.about')">
+              <i class="fa fa-info-circle" aria-hidden="true"></i>
+            </a>
+            <a v-if="route.path === '/'" class="nav-icon" @click="showMessages" :title="'Messages'">
+              <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+          </div>
         </x-header>
 
         <!-- main content -->
         <keep-alive>
           <router-view class="router-view"></router-view>
         </keep-alive>
-
-        <!-- tabbar content -->
-        <tabbar class="app-tabber" slot="bottom" style="position: fixed">
-          <tabbar-item link="/" :selected="route.path !== '/settings' && route.path !== '/about'">
-            <x-icon slot="icon" type="ios-grid-view-outline"></x-icon>
-            <x-icon slot="icon-active" type="ios-grid-view-outline" class="tabber-icon-active"></x-icon>
-            <span slot="label">{{ $t('tabbar.game') }}</span>
-          </tabbar-item>
-          <tabbar-item link="/settings" :selected="route.path === '/settings'">
-            <x-icon slot="icon" type="ios-cog-outline"></x-icon>
-            <x-icon slot="icon-active" type="ios-cog-outline" class="tabber-icon-active"></x-icon>
-            <span slot="label">{{ $t('tabbar.settings') }}</span>
-          </tabbar-item>
-          <tabbar-item link="/about" :selected="route.path === '/about'">
-            <x-icon slot="icon" type="ios-information-outline"></x-icon>
-            <x-icon slot="icon-active" type="ios-information-outline" class="tabber-icon-active"></x-icon>
-            <span slot="label">{{ $t('tabbar.about') }}</span>
-          </tabbar-item>
-        </tabbar>
       </view-box>
     </drawer>
   </div>
@@ -184,9 +175,7 @@ export default {
     if ('serviceWorker' in navigator) {
       let swTimeout = setTimeout(() => {
         console.warn('Service Worker ready timeout, loading engine directly...')
-        if (_this.configIndex == 0)
-          _this.setValue({ key: 'configIndex', value: 1 })
-        ensureEngineLoaded(false)
+        ensureEngineLoaded(true)
       }, 3000)
 
       register(`${process.env.BASE_URL}service-worker.js`, {
@@ -208,9 +197,7 @@ export default {
         error(error) {
           clearTimeout(swTimeout)
           console.error('Service Worker registration failed:', error)
-          if (_this.configIndex == 0)
-            _this.setValue({ key: 'configIndex', value: 1 })
-          ensureEngineLoaded(false)
+          ensureEngineLoaded(true)
         }
       })
 
@@ -240,9 +227,7 @@ export default {
         });
       });
     } else {
-      if (this.configIndex == 0)
-        this.setValue({ key: 'configIndex', value: 1 })
-      ensureEngineLoaded(false)
+      ensureEngineLoaded(true)
     }
   },
 }
