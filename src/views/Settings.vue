@@ -6,7 +6,7 @@
     <group>
       <group-title slot="title">{{ $t('setting.appearance.title') }}</group-title>
       <cell :title="$t('setting.appearance.theme')">
-        <div class="theme-segment" slot="value" style="width: 180px;">
+        <div class="theme-segment" slot="value">
           <div class="theme-segment-item" :class="{active: themeValue === 'auto'}" @click="themeValue = 'auto'">
             <i class="fa fa-desktop"></i>{{ $t('setting.appearance.auto') }}
           </div>

@@ -11,9 +11,9 @@ const state = {
   theme: 'auto', // 'auto' | 'light' | 'dark'
   boardStyle: {
     boardColor: '#F4D03F',
-    lineColor: '#000000',
+    lineColor: '', // empty = auto based on theme
     lineWidth: 0.03,
-    coordColor: '#000000',
+    coordColor: '', // empty = auto based on theme
     coordFontStyle: '',
     coordFontFamily: 'sans-serif',
     starRadiusScale: 0.1,

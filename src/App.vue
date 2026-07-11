@@ -173,15 +173,27 @@ export default {
       })
     }
 
-    // 注册 Service Worker
+    // 注册 Service Worker (带超时兜底:若 3 秒内未 ready,直接加载引擎)
+    let engineLoaded = false
+    const ensureEngineLoaded = (loadFullEngine) => {
+      if (engineLoaded) return
+      engineLoaded = true
+      loadEngine(loadFullEngine)
+    }
+
     if ('serviceWorker' in navigator) {
+      let swTimeout = setTimeout(() => {
+        console.warn('Service Worker ready timeout, loading engine directly...')
+        if (_this.configIndex == 0)
+          _this.setValue({ key: 'configIndex', value: 1 })
+        ensureEngineLoaded(false)
+      }, 3000)
+
       register(`${process.env.BASE_URL}service-worker.js`, {
         ready() {
-          console.log(
-            'App is being served from cache by a service worker.\n' +
-            'For more details, visit https://goo.gl/AFskqB'
-          )
-          loadEngine(true)
+          clearTimeout(swTimeout)
+          console.log('App is being served from cache by a service worker.')
+          ensureEngineLoaded(true)
         },
         updated() {
           _this.$vux.confirm.show_i18n({
@@ -194,7 +206,11 @@ export default {
           })
         },
         error(error) {
-          console.error('Error during service worker registration:', error)
+          clearTimeout(swTimeout)
+          console.error('Service Worker registration failed:', error)
+          if (_this.configIndex == 0)
+            _this.setValue({ key: 'configIndex', value: 1 })
+          ensureEngineLoaded(false)
         }
       })
 
@@ -226,7 +242,7 @@ export default {
     } else {
       if (this.configIndex == 0)
         this.setValue({ key: 'configIndex', value: 1 })
-      loadEngine(false)
+      ensureEngineLoaded(false)
     }
   },
 }

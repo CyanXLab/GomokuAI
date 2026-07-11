@@ -53,6 +53,9 @@ function fillCircle(ctx, x, y, r) {
 }
 
 function drawBackground(ctx, style, w, h, noShadow) {
+  // Resolve empty colors based on current theme
+  if (!style.lineColor) style.lineColor = document.documentElement.getAttribute('data-theme') === 'dark' ? '#cccccc' : '#000000'
+  if (!style.coordColor) style.coordColor = document.documentElement.getAttribute('data-theme') === 'dark' ? '#cccccc' : '#000000'
   ctx.save()
   if (!noShadow) {
     ctx.shadowOffsetX = ctx.shadowOffsetY = 2

@@ -141,7 +141,7 @@
       </div>
     </div>
 
-    <load-more :show-loading="false" background-color="#fbf9fe" class="seperator"></load-more>
+    <load-more :show-loading="false" background-color="transparent" class="seperator"></load-more>
 
     <div class="info-box" :style="showAnalysis ? {} : { display: 'none' }">
       <div>
@@ -150,9 +150,9 @@
           :show-cancel="false"></x-progress>
 
         <!-- 单点分析的信息输出 -->
-        <x-table v-if="nbest == 1" :cell-bordered="true" style="background-color: #fff; line-height: 210%">
+        <x-table v-if="nbest == 1" :cell-bordered="true" style="background-color: var(--color-bg-card); line-height: 210%">
           <thead>
-            <tr style="background-color: #f7f7f7">
+            <tr style="background-color: var(--color-bg-hover)">
               <th>{{ $t('game.info.depth') }}</th>
               <th>{{ $t('game.info.eval') }}</th>
               <th>{{ $t('game.info.speed') }}</th>
@@ -191,9 +191,9 @@
 
         <!-- 多点分析的信息输出 -->
         <div v-else>
-          <x-table :cell-bordered="true" style="background-color: #fff; line-height: 210%">
+          <x-table :cell-bordered="true" style="background-color: var(--color-bg-card); line-height: 210%">
             <thead>
-              <tr style="background-color: #f7f7f7">
+              <tr style="background-color: var(--color-bg-hover)">
                 <th>{{ $t('game.info.speed') }}</th>
                 <th>{{ $t('game.info.nodes') }}</th>
                 <th>{{ $t('game.info.time') }}</th>
@@ -207,9 +207,9 @@
               </tr>
             </tbody>
           </x-table>
-          <x-table :cell-bordered="true" style="background-color: #fff; line-height: 210%">
+          <x-table :cell-bordered="true" style="background-color: var(--color-bg-card); line-height: 210%">
             <thead>
-              <tr style="background-color: #f7f7f7">
+              <tr style="background-color: var(--color-bg-hover)">
                 <th>{{ $t('game.info.nbestIndex') }}</th>
                 <th>{{ $t('game.info.depth') }}</th>
                 <th>{{ $t('game.info.eval') }}</th>
@@ -884,7 +884,7 @@ export default {
 .screenshot-box {
   width: 95%;
   text-align: center;
-  background-color: #fff;
+  background-color: var(--color-bg-card);
   height: 95%;
   margin: 0 auto;
   border-radius: 5px;
@@ -946,19 +946,19 @@ export default {
 }
 
 .icon-button:active {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: var(--color-bg-active);
 }
 
 .icon-button i {
   font-size: 0.8rem;
-  color: darkgray;
+  color: var(--color-text-tertiary);
 }
 
 .icon-button:hover i {
-  color: black;
+  color: var(--color-accent);
 }
 
 .icon-button:active i {
-  color: black;
+  color: var(--color-accent);
 }
 </style>
