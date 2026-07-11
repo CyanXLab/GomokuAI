@@ -1,0 +1,147 @@
+{
+  "appName": "Gomoku Calculator",
+  "common": {
+    "ok": "Xác nhận",
+    "confirm": "Xác nhận",
+    "cancel": "Hủy"
+  },
+  "tabbar": {
+    "game": "Bàn cờ",
+    "settings": "Cài đặt",
+    "about": "Giới thiệu"
+  },
+  "game": {
+    "balance1": "Tìm điểm cân bằng bằng một nước",
+    "balance2": "Tìm điểm cân bằng bằng hai nước",
+    "flip": "Lật",
+    "move": "Nước đi",
+    "info": {
+      "depth": "Độ sâu",
+      "eval": "Đánh giá",
+      "speed": "Tốc độ",
+      "nodes": "Số nút",
+      "time": "Thời gian",
+      "bestline": "Đường đi tốt nhất",
+      "nbestIndex": "Thứ tự"
+    },
+    "interruptThinking": {
+      "title": "AI đang suy nghĩ",
+      "msg": "Bạn có muốn dừng suy nghĩ ngay lập tức không?"
+    },
+    "swap": {
+      "title": "Đổi bên",
+      "msg": "AI chọn đổi bên",
+      "questionTitle": "Đổi bên?",
+      "questionMsg": "Bạn có muốn đổi bên?"
+    },
+    "forbid": {
+      "title": "Nước cấm",
+      "msg": "Vị trí này là nước cấm."
+    },
+    "shotJpg": "Chụp màn hình định dạng file JPG",
+    "shotGif": "Chụp màn hình định dạng file GIF",
+    "gifDelay": "Nhập độ trễ (mili giây) cho mỗi khung hình",
+    "gifStart": "Nhập chỉ số bắt đầu",
+    "gifLoading": "Đang tạo GIF...",
+    "saveScreenshot": "Lưu ảnh chụp",
+    "saveScreenshotIOS": "Nhấn giữ để chụp",
+    "currentPos": "Vị trí",
+    "evalChart": "Biểu đồ đánh giá",
+    "black": "Quân đen",
+    "white": "Quân trắng",
+    "engineLoading": "Đang tải dữ liệu engine...",
+    "engineLoadingError": "Tải động cơ thất bại, vui lòng làm mới và thử lại",
+    "copiedToClipboard": "Đã sao chép vào clipboard"
+  },
+  "setting": {
+    "language": "Ngôn ngữ",
+    "thinking": {
+      "timeTitle": "Thời gian suy nghĩ",
+      "turnTime": "Thời gian mỗi lượt (giây)",
+      "matchTime": "Thời gian trận đấu (giây)",
+      "maxDepth": "Đồ sâu tối đa",
+      "maxNode": "Số nút tối đa (M)",
+      "fast": "Cờ chớp (~3 phút)",
+      "slow": "Chậm (~15 phút)",
+      "analysis": "Chế độ phân tích (Không giới hạn thời gian)",
+      "custom": "Tùy chỉnh",
+      "handicap": "Chấp",
+      "nbest": "Phân tích nhiều vị trí",
+      "thinkTitle": "Suy nghĩ",
+      "threads": "Số luồng",
+      "pondering": "Suy nghĩ nền",
+      "hashSize": "Kích thước bảng băm",
+      "config": {
+        "title": "Mô hình Engine",
+        "mix9svq": "Mix9svq NNUE",
+        "220723": "Đánh giá cổ điển (2022/07/23)",
+        "210901": "Đánh giá cổ điển (2021/09/01)"
+      },
+      "candrange": {
+        "title": "Phạm vi",
+        "square2": "Square2",
+        "square2line3": "Square2 + Line3",
+        "square3": "Square3",
+        "square3line4": "Square3 + Line4 (Khuyến nghị)",
+        "square4": "Square4",
+        "fullboard": "Toàn bàn cờ"
+      }
+    },
+    "board": {
+      "title": "Bàn cờ",
+      "size": "Kích thước bàn cờ",
+      "rule": {
+        "title": "Luật",
+        "gomoku": "Tự do",
+        "standard": "Tiêu chuẩn",
+        "renju": "Renju",
+        "swap1": "Tự do - SWAP1"
+      },
+      "aiThinkBlack": "AI cầm quân đen",
+      "aiThinkWhite": "AI cầm quân trắng",
+      "clickCheck": {
+        "title": "Cách đặt quân",
+        "direct": "Đặt quân trực tiếp",
+        "confirm": "Xác nhận trước khi đặt",
+        "slide": "Kéo thả để đặt quân"
+      },
+      "showTitle": "Hiển thị bàn cờ",
+      "showCoord": "Hiển thị tọa độ",
+      "showAnalysis": "Hiển thị phân tích",
+      "showDetail": "Hiển thị chi tiết",
+      "showIndex": "Hiển thị thứ tự",
+      "showLastStep": "Làm nổi bật nước đi cuối",
+      "showWinline": "Hiển thị đường thắng",
+      "showForbid": "Hiển thị nước cấm",
+      "showPvEval": {
+        "title": "Hiển thị đánh giá phân tích",
+        "none": "Không hiển thị",
+        "eval": "Hiển thị đánh giá (centipawn)",
+        "winrate": "Hiển thị tỉ lệ thắng (%)"
+      },
+      "colorTitle": "Màu sắc",
+      "boardColor": "Màu bàn cờ",
+      "lastStepColor": "Màu nước đi cuối",
+      "winlineColor": "Màu đường thắng",
+      "bestMoveColor": "Phân tích - Nước đi tốt nhất",
+      "thoughtMoveColor": "Phân tích - Nước đi đã suy nghĩ",
+      "lostMoveColor": "Phân tích - Nước thua"
+    },
+    "browser": {
+      "capability": "Khả năng trình duyệt",
+      "simd": "SIMD",
+      "relaxedSimd": "(Tăng cường)",
+      "threads": "Multi Threading",
+      "maxthreads": "Số luồng tối đa"
+    },
+    "reset": "Đặt lại tất cả cài đặt"
+  },
+  "update": {
+    "title": "Đã phát hiện phiên bản mới",
+    "msg": "Đã phát hiện phiên bản mới. Vui lòng làm mới trang để cập nhật."
+  },
+  "install": {
+    "title": "Chỉ còn một bước nữa!",
+    "msg": "Bạn có muốn thêm 'Máy tính Cờ caro' vào màn hình chính không? Sau khi cài đặt, bạn có thể dễ dàng tận hưởng trải nghiệm ván cờ mọi lúc, ngay cả khi không có mạng!"
+  }
+}

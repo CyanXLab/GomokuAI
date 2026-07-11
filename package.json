@@ -1,0 +1,43 @@
+{
+  "name": "gomoku-calculator",
+  "version": "0.31.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'",
+    "pretty": "prettier --write \"./src/**/*.{js,vue,json}\" \"./public/index.html\""
+  },
+  "dependencies": {
+    "core-js": "^2.6.5",
+    "dynamic-import": "^0.1.1",
+    "es6-promise": "^4.2.8",
+    "github-markdown-css": "^3.0.1",
+    "register-service-worker": "^1.7.1",
+    "throttle-debounce": "^2.3.0",
+    "vue": "^2.6.10",
+    "vue-i18n": "^8.0.0",
+    "vue-router": "^3.0.3",
+    "vuex": "^3.1.1",
+    "vux": "^2.10.1",
+    "wasm-feature-detect": "^1.8.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.8.0",
+    "@vue/cli-plugin-eslint": "^3.8.0",
+    "@vue/cli-plugin-pwa": "~4.5.7",
+    "@vue/cli-service": "^3.8.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.2.3",
+    "less": "^3.9.0",
+    "less-loader": "^5.0.0",
+    "vue-cli-plugin-i18n": "^0.6.0",
+    "vue-loader": "^14.2.2",
+    "vue-template-compiler": "^2.6.10",
+    "vux-loader": "^1.2.9",
+    "worker-loader": "^3.0.8",
+    "yaml-loader": "^0.5.0"
+  }
+}
