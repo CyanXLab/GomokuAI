@@ -1,5 +1,5 @@
 {
-  "appName": "Gomoku Calculator",
+  "appName": "GomokuAI",
   "common": {
     "ok": "Xác nhận",
     "confirm": "Xác nhận",
@@ -134,7 +134,14 @@
       "threads": "Multi Threading",
       "maxthreads": "Số luồng tối đa"
     },
-    "reset": "Đặt lại tất cả cài đặt"
+    "reset": "Đặt lại tất cả cài đặt",
+    "appearance": {
+      "title": "Giao diện",
+      "theme": "Chủ đề",
+      "light": "Sáng",
+      "dark": "Tối",
+      "auto": "Hệ thống"
+    }
   },
   "update": {
     "title": "Đã phát hiện phiên bản mới",

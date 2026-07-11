@@ -8,6 +8,7 @@ export const CONFIGS = ['config.toml', 'classical220723.toml', 'classical210901.
 
 const state = {
   language: null,
+  theme: 'auto', // 'auto' | 'light' | 'dark'
   boardStyle: {
     boardColor: '#F4D03F',
     lineColor: '#000000',
@@ -75,6 +76,7 @@ const state = {
 
 const propertiesToSave = [
   'language',
+  'theme',
   'boardSize',
   'thinkTimeOption',
   'turnTime',

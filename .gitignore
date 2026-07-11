@@ -1,18 +1,24 @@
-# Dependencies
-node_modules/
-
-# Editor / OS
 .DS_Store
-.idea/
-.vscode/
-*.swp
-*.swo
-Thumbs.db
+node_modules
+dist
 
-# Logs
+# Do not store the built data
+public/build
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Build intermediate (keep dist/ and public/build/ as they contain the compiled WASM engine)
-# Note: dist/ and public/build/ are intentionally committed so the repo is deployable as-is.
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

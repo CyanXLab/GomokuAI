@@ -1,5 +1,5 @@
 {
-  "appName": "五目並べ計算機",
+  "appName": "GomokuAI",
   "common": {
     "ok": "確認",
     "confirm": "確認",
@@ -134,7 +134,14 @@
       "threads": "マルチスレッド",
       "maxthreads": "最大スレッド数"
     },
-    "reset": "全設定をリセット"
+    "reset": "全設定をリセット",
+    "appearance": {
+      "title": "外観",
+      "theme": "テーマ",
+      "light": "ライト",
+      "dark": "ダーク",
+      "auto": "システム"
+    }
   },
   "update": {
     "title": "新しいバージョンを発見",

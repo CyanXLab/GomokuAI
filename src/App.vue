@@ -55,6 +55,7 @@
 import { ViewBox, XHeader, Tabbar, TabbarItem, Drawer } from 'vux'
 import { mapState, mapMutations, mapActions } from 'vuex'
 import { register } from 'register-service-worker'
+import { initTheme } from '@/theme.js'
 
 function canShowInstallPrompt() {
   const installData = JSON.parse(localStorage.getItem('pwaInstallPromptData'));
@@ -103,7 +104,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('settings', ['language', 'configIndex']),
+    ...mapState('settings', ['language', 'theme', 'configIndex']),
     ...mapState('ai', ['messages']),
     route() {
       return this.$route
@@ -122,8 +123,13 @@ export default {
     language(newValue) {
       this.$i18n.locale = newValue
     },
+    theme(newValue) {
+      const { setTheme } = require('@/theme.js')
+      setTheme(newValue)
+    },
   },
   created() {
+    initTheme()
     this.getBrowserCapabilities()
     this.readCookies()
     if (!this.language) {
@@ -228,6 +234,7 @@ export default {
 
 <style lang="less">
 @import '~vux/src/styles/index.less';
+@import './styles/modern.less';
 
 html,
 body {

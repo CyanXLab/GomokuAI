@@ -1,5 +1,5 @@
 {
-  "appName": "Gomoku Calculator",
+  "appName": "GomokuAI",
   "common": {
     "ok": "OK",
     "confirm": "Confirm",
@@ -134,7 +134,14 @@
       "threads": "Multi Threading",
       "maxthreads": "Max Number of Threads"
     },
-    "reset": "Reset all settings"
+    "reset": "Reset all settings",
+    "appearance": {
+      "title": "Appearance",
+      "theme": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "auto": "System"
+    }
   },
   "update": {
     "title": "New Version Found",

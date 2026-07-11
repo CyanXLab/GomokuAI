@@ -15,10 +15,10 @@ importScripts("/workbox-v4.3.1/workbox-sw.js");
 workbox.setConfig({modulePathPrefix: "/workbox-v4.3.1"});
 
 importScripts(
-  "/precache-manifest.deac918dcf84007dc08bd9516fd26797.js"
+  "/precache-manifest.ac37626d2364f6e20894c47307d7cd61.js"
 );
 
-workbox.core.setCacheNameDetails({prefix: "gomoku-calculator"});
+workbox.core.setCacheNameDetails({prefix: "gomoku-ai"});
 
 workbox.core.skipWaiting();
 

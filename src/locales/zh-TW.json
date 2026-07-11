@@ -1,5 +1,5 @@
 {
-  "appName": "五子棋計算器",
+  "appName": "GomokuAI",
   "common": {
     "ok": "確定",
     "confirm": "確認",
@@ -134,7 +134,14 @@
       "threads": "多線程",
       "maxthreads": "最大線程數"
     },
-    "reset": "重置所有設定"
+    "reset": "重置所有設定",
+    "appearance": {
+      "title": "外觀",
+      "theme": "主題",
+      "light": "淺色",
+      "dark": "深色",
+      "auto": "跟隨系統"
+    }
   },
   "update": {
     "title": "發現新版本",

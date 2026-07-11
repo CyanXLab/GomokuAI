@@ -3,6 +3,22 @@
     <group>
       <popup-radio :title="$t('setting.language')" v-model="languageValue" :options="languageOptions" />
     </group>
+    <group>
+      <group-title slot="title">{{ $t('setting.appearance.title') }}</group-title>
+      <cell :title="$t('setting.appearance.theme')">
+        <div class="theme-segment" slot="value" style="width: 180px;">
+          <div class="theme-segment-item" :class="{active: themeValue === 'auto'}" @click="themeValue = 'auto'">
+            <i class="fa fa-desktop"></i>{{ $t('setting.appearance.auto') }}
+          </div>
+          <div class="theme-segment-item" :class="{active: themeValue === 'light'}" @click="themeValue = 'light'">
+            <i class="fa fa-sun-o"></i>{{ $t('setting.appearance.light') }}
+          </div>
+          <div class="theme-segment-item" :class="{active: themeValue === 'dark'}" @click="themeValue = 'dark'">
+            <i class="fa fa-moon-o"></i>{{ $t('setting.appearance.dark') }}
+          </div>
+        </div>
+      </cell>
+    </group>
 
     <group>
       <group-title slot="title">{{ $t('setting.thinking.timeTitle') }}</group-title>
@@ -130,6 +146,7 @@ export default {
     ...mapState('ai', ['fullEngine']),
     ...mapState('settings', [
       'language',
+      'theme',
       'thinkTimeOption',
       'turnTime',
       'matchTime',
@@ -238,6 +255,14 @@ export default {
       },
       set(v) {
         this.setValue({ key: 'language', value: v })
+      },
+    },
+    themeValue: {
+      get() {
+        return this.theme || 'auto'
+      },
+      set(v) {
+        this.setValue({ key: 'theme', value: v })
       },
     },
     thinkTimeSelected: {

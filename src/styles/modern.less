@@ -1,0 +1,438 @@
+/**
+ * GomokuAI Modern UI - Fluent Design inspired.
+ * Defines CSS variables for light/dark themes and modern component styles.
+ * This is imported in App.vue to override Vux defaults.
+ */
+
+:root {
+  /* ===== Light theme (default) ===== */
+  --color-bg: #f3f3f3;
+  --color-bg-elevated: #ffffff;
+  --color-bg-card: #ffffff;
+  --color-bg-hover: rgba(0, 0, 0, 0.04);
+  --color-bg-active: rgba(0, 0, 0, 0.08);
+
+  --color-header-bg: rgba(255, 255, 255, 0.72);
+  --color-header-border: rgba(0,0,0, 0.06);
+  --color-header-text: #1a1a1a;
+
+  --color-tabbar-bg: rgba(255, 255, 255, 0.82);
+  --color-tabbar-border: rgba(0,0,0, 0.06);
+  --color-tabbar-text: #616161;
+  --color-tabbar-text-active: #0078d4;
+
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #5f5f5f;
+  --color-text-tertiary: #8a8a8a;
+  --color-text-on-accent: #ffffff;
+
+  --color-accent: #0078d4;
+  --color-accent-hover: #1a86d9;
+  --color-accent-pressed: #006abc;
+  --color-accent-soft: rgba(0, 120, 212, 0.1);
+
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-strong: rgba(0, 0, 0, 0.12);
+  --color-divider: rgba(0, 0, 0, 0.06);
+
+  --color-success: #107c10;
+  --color-warning: #ffb900;
+  --color-error: #d13438;
+  --color-info: #0078d4;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.12);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  --blur-acrylic: saturate(180%) blur(30px);
+
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme='dark'] {
+  --color-bg: #1f1f1f;
+  --color-bg-elevated: #2b2b2b;
+  --color-bg-card: #2b2b2b;
+  --color-bg-hover: rgba(255, 255, 255, 0.06);
+  --color-bg-active: rgba(255, 255, 255, 0.1);
+
+  --color-header-bg: rgba(31, 31, 31, 0.72);
+  --color-header-border: rgba(255, 255, 255, 0.08);
+  --color-header-text: #ffffff;
+
+  --color-tabbar-bg: rgba(31, 31, 31, 0.82);
+  --color-tabbar-border: rgba(255, 255, 255, 0.08);
+  --color-tabbar-text: #9a9a9a;
+  --color-tabbar-text-active: #4cc2ff;
+
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #c8c8c8;
+  --color-text-tertiary: #8a8a8a;
+  --color-text-on-accent: #ffffff;
+
+  --color-accent: #4cc2ff;
+  --color-accent-hover: #6fcdff;
+  --color-accent-pressed: #3ab4f0;
+  --color-accent-soft: rgba(76, 194, 255, 0.15);
+
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.12);
+  --color-divider: rgba(255, 255, 255, 0.06);
+
+  --color-success: #6bb700;
+  --color-warning: #ffb900;
+  --color-error: #ff6b6b;
+  --color-info: #4cc2ff;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== Global resets & smooth transitions ===== */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg) !important;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
+}
+
+/* Smooth theme switch for all elements */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: var(--transition-normal);
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Disable transition for canvas (board rendering) and transform-heavy elements */
+canvas, .board, .board * {
+  transition: none !important;
+}
+
+/* ===== Header (X-Header override) ===== */
+.header-bar {
+  background: var(--color-header-bg) !important;
+  backdrop-filter: var(--blur-acrylic);
+  -webkit-backdrop-filter: var(--blur-acrylic);
+  border-bottom: 1px solid var(--color-header-border) !important;
+  color: var(--color-header-text) !important;
+}
+
+.header-bar .vux-header-title {
+  color: var(--color-header-text) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.3px;
+}
+
+.header-bar .vux-header-title span {
+  color: var(--color-header-text) !important;
+}
+
+/* ===== Tabbar override ===== */
+.app-tabber {
+  background: var(--color-tabbar-bg) !important;
+  backdrop-filter: var(--blur-acrylic);
+  -webkit-backdrop-filter: var(--blur-acrylic);
+  border-top: 1px solid var(--color-tabbar-border) !important;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.04) !important;
+}
+
+.app-tabber .weui-tabbar__item {
+  padding: 6px 0 8px !important;
+  transition: all var(--transition-fast) !important;
+}
+
+.app-tabber .weui-tabbar__item:active {
+  background: var(--color-bg-active) !important;
+}
+
+.app-tabber .weui-tabbar__label {
+  color: var(--color-tabbar-text) !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+}
+
+.app-tabber .weui-tabbar__item.weui-bar__item_on .weui-tabbar__label,
+.app-tabber .weui-tabbar__item.tabbar-item-selected .weui-tabbar__label {
+  color: var(--color-tabbar-text-active) !important;
+}
+
+.app-tabber .weui-tabbar__item.weui-bar__item_on svg,
+.app-tabber .weui-tabbar__item.tabbar-item-selected svg {
+  fill: var(--color-tabbar-text-active) !important;
+}
+
+.app-tabber svg {
+  fill: var(--color-tabbar-text) !important;
+  transition: fill var(--transition-fast) !important;
+}
+
+/* ===== Vux component overrides ===== */
+
+/* Group (card) */
+.weui-cells {
+  background: var(--color-bg-card) !important;
+  border-radius: var(--radius-md) !important;
+  margin: 10px 12px !important;
+  box-shadow: var(--shadow-sm) !important;
+  border: 1px solid var(--color-border) !important;
+  overflow: hidden;
+}
+
+.weui-cells::before,
+.weui-cells::after {
+  display: none !important;
+}
+
+.weui-cell {
+  border-bottom: 1px solid var(--color-divider) !important;
+  padding: 12px 15px !important;
+}
+
+.weui-cell:last-child {
+  border-bottom: none !important;
+}
+
+.weui-cell__bd {
+  color: var(--color-text-primary) !important;
+}
+
+/* Group title */
+.weui-cells__group-title {
+  color: var(--color-text-secondary) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 16px 16px 8px !important;
+  margin-top: 8px !important;
+}
+
+/* Switch */
+.weui-switch,
+.weui-switch-cp__box {
+  background-color: var(--color-text-tertiary) !important;
+}
+
+.weui-switch:checked,
+.weui-switch-cp__input:checked + .weui-switch-cp__box {
+  background-color: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+}
+
+/* Radio */
+.weui-cells_radio .weui-check:checked + .weui-icon-checked {
+  color: var(--color-accent) !important;
+}
+
+/* Number input buttons */
+.weui-cell__ft .vux-number-round .vux-number-input {
+  color: var(--color-text-primary) !important;
+  background: var(--color-bg-elevated) !important;
+  border: 1px solid var(--color-border-strong) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+.vux-number-round .vux-number-selector {
+  background: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+  border-radius: 50% !important;
+  width: 24px !important;
+  height: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.vux-number-round .vux-number-selector svg {
+  fill: #fff !important;
+}
+
+.vux-number-round .vux-number-selector:active {
+  transform: scale(0.92);
+  background: var(--color-accent-pressed) !important;
+}
+
+/* Buttons */
+.weui-btn {
+  border-radius: var(--radius-md) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.3px;
+  transition: all var(--transition-fast) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.weui-btn:active {
+  transform: scale(0.98);
+}
+
+.weui-btn_primary {
+  background-color: var(--color-accent) !important;
+}
+
+.weui-btn_primary:active {
+  background-color: var(--color-accent-pressed) !important;
+}
+
+.weui-btn_warn {
+  background-color: var(--color-error) !important;
+}
+
+/* Popup radio selector */
+.weui-cell_select .weui-select {
+  color: var(--color-text-primary) !important;
+}
+
+.weui-cell_select .weui-cell__bd::after {
+  border-color: var(--color-text-tertiary) !important;
+}
+
+/* Popup dialog */
+.weui-dialog {
+  background: var(--color-bg-elevated) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-lg) !important;
+  overflow: hidden;
+}
+
+.weui-dialog__title {
+  color: var(--color-text-primary) !important;
+  font-weight: 600 !important;
+}
+
+.weui-dialog__bd {
+  color: var(--color-text-secondary) !important;
+}
+
+.weui-dialog__btn {
+  color: var(--color-accent) !important;
+  font-weight: 600 !important;
+}
+
+.weui-dialog__btn_default {
+  color: var(--color-text-secondary) !important;
+}
+
+/* Actionsheet */
+.weui-actionsheet {
+  background: var(--color-bg-elevated) !important;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+}
+
+.weui-actionsheet__cell {
+  color: var(--color-text-primary) !important;
+}
+
+.weui-actionsheet__action {
+  margin-top: 8px !important;
+}
+
+/* Drawer */
+.drawer {
+  background: var(--color-bg-elevated) !important;
+}
+
+/* Toast */
+.weui-toast {
+  background: var(--color-bg-elevated) !important;
+  color: var(--color-text-primary) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+/* ===== Markdown body (About page) ===== */
+.markdown-body {
+  color: var(--color-text-primary) !important;
+  background: transparent !important;
+}
+
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4 {
+  color: var(--color-text-primary) !important;
+  border-bottom-color: var(--color-divider) !important;
+}
+
+.markdown-body a {
+  color: var(--color-accent) !important;
+}
+
+.markdown-body code {
+  background: var(--color-bg-hover) !important;
+  color: var(--color-text-primary) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+.markdown-body blockquote {
+  color: var(--color-text-secondary) !important;
+  border-left-color: var(--color-accent) !important;
+}
+
+/* ===== Scrollbar styling ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-tertiary);
+}
+
+/* ===== Custom theme switch control ===== */
+.theme-segment {
+  display: flex;
+  background: var(--color-bg-hover);
+  border-radius: var(--radius-md);
+  padding: 3px;
+  margin: 8px 15px;
+  gap: 2px;
+}
+
+.theme-segment-item {
+  flex: 1;
+  text-align: center;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-radius: calc(var(--radius-md) - 3px);
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.theme-segment-item:hover {
+  color: var(--color-text-primary);
+}
+
+.theme-segment-item.active {
+  background: var(--color-bg-elevated);
+  color: var(--color-accent);
+  box-shadow: var(--shadow-sm);
+}
+
+.theme-segment-item .fa {
+  margin-right: 6px;
+  font-size: 13px;
+}

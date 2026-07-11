@@ -50,13 +50,13 @@ module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? '/' : '/',
 
   pwa: {
-    name: 'Gomoku Calculator',
+    name: 'GomokuAI',
     themeColor: '#2E86C1',
     msTileColor: '#2E86C1',
     appleMobileWebAppCapable: 'yes',
     appleMobileWebAppStatusBarStyle: 'default',
     manifestOptions: {
-      short_name: 'Gomocalc',
+      short_name: 'GomokuAI',
       icons: [
         {
           src: './icon.png',

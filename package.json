@@ -1,6 +1,6 @@
 {
-  "name": "gomoku-calculator",
-  "version": "0.31.0",
+  "name": "gomoku-ai",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

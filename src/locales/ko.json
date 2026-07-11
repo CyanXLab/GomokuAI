@@ -1,5 +1,5 @@
 {
-  "appName": "오목 계산기",
+  "appName": "GomokuAI",
   "common": {
     "ok": "확인",
     "confirm": "확인",
@@ -134,7 +134,14 @@
       "threads": "멀티스레드",
       "maxthreads": "최대 스레드 수"
     },
-    "reset": "모든 설정 초기화"
+    "reset": "모든 설정 초기화",
+    "appearance": {
+      "title": "외관",
+      "theme": "테마",
+      "light": "밝게",
+      "dark": "어둡게",
+      "auto": "시스템"
+    }
   },
   "update": {
     "title": "새 버전 발견",

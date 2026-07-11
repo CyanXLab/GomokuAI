@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('gomokuai_theme') || 'auto';
+          var dark = t === 'dark' || (t === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+        } catch(e) {}
+      })();
+    </script>
     <!-- 定义文档的字符编码 -->
     <meta charset="utf-8" />
     <!-- 强制Chromium内核，作用于360浏览器、QQ浏览器等国产双核浏览器 -->
@@ -20,19 +29,19 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="Gomocalc" />
+    <meta name="apple-mobile-web-app-title" content="GomokuAI" />
     <meta name="description" content="A powerful and easy-to-use online Gomoku/Renju AI" />
     <link rel="shortcut icon" sizes="192x192" href="/icon.png" />
     <link rel="apple-touch-icon" href="/icon.png" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="stylesheet" href="/css/font-awesome.min.css" />
-    <title>五子棋计算器 Gomoku Calculator</title>
+    <title>GomokuAI</title>
   </head>
 
   <body>
     <noscript>
       <strong
-        >We're sorry but Gomoku Calculator doesn't work properly without JavaScript enabled. Please
+        >We're sorry but GomokuAI doesn't work properly without JavaScript enabled. Please
         enable it to continue.</strong
       >
     </noscript>
