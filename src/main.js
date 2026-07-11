@@ -4,13 +4,9 @@ import router from './router'
 import i18n from './i18n'
 import store from './store/index.js'
 
-// Redirect to https pages
-if (process.env.NODE_ENV != 'development') {
-  let loc = window.location.href + ''
-  if (loc.indexOf('http://') == 0) {
-    window.location.href = loc.replace('http://', 'https://')
-  }
-}
+// Note: HTTP->HTTPS auto-redirect removed.
+// Users can choose HTTP or HTTPS via serve.py flags.
+// Forcing HTTPS broke local serving with python serve.py --http.
 
 // Fix error of redundant navigation to current location
 const originalPush = router.push
