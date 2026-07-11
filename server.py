@@ -204,7 +204,8 @@ def do_player_move(x, y):
 
     # pve 模式：AI 自动应招
     if state.game_mode == "pve":
-        ai_color = 2 if state.player_color == 1 else 1
+        # AI 应招的颜色 = 当前该下的颜色（玩家下完后自动切换）
+        ai_color = state.get_current_color()
         print(f"[MOVE] pve AI 应招, ai_color={ai_color}", flush=True)
         state.thinking = True
         try:

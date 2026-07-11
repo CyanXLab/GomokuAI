@@ -289,8 +289,15 @@ input, textarea, .move-list, .engine-info, select { -webkit-user-select: text; u
 /* 响应式 */
 @media (max-width: 900px) {
     .content { flex-direction: column; }
-    .board-section { flex: none; height: 55vh; }
-    .sidebar { width: 100%; border-left: none; border-top: 1px solid var(--border-subtle); flex: 1; }
+    .board-section { flex: none; height: 50vh; min-height: 300px; }
+    .sidebar {
+        width: 100%; border-left: none; border-top: 1px solid var(--border-subtle);
+        flex: 1; min-height: 0; /* 关键：让 overflow 生效 */
+    }
+    .sidebar-body {
+        flex: 1; overflow-y: auto; overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
 }
 @media (max-width: 600px) {
     .titlebar { height: 42px; padding: 0 8px; }

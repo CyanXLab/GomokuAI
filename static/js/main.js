@@ -345,14 +345,27 @@ document.querySelectorAll("#modeControl button").forEach((b) => {
         document.querySelectorAll("#modeControl button").forEach((x) => x.classList.remove("active"));
         b.classList.add("active");
         const mode = b.dataset.mode;
+        State.gameMode = mode;  // 立即更新本地状态
         $("colorField").style.display = mode === "pvp" ? "none" : "";
+        renderStatusTag();  // 刷新状态标签
     });
 });
 document.querySelectorAll("#ruleControl button").forEach((b) => {
     b.addEventListener("click", () => {
         document.querySelectorAll("#ruleControl button").forEach((x) => x.classList.remove("active"));
         b.classList.add("active");
-        $("ruleHint").textContent = RULE_INFO[parseInt(b.dataset.rule)]?.desc || "";
+        const rule = parseInt(b.dataset.rule);
+        State.rule = rule;  // 立即更新本地状态
+        $("ruleHint").textContent = RULE_INFO[rule]?.desc || "";
+        renderStatusTag();  // 刷新状态标签
+    });
+});
+document.querySelectorAll("#sizeControl button").forEach((b) => {
+    b.addEventListener("click", () => {
+        document.querySelectorAll("#sizeControl button").forEach((x) => x.classList.remove("active"));
+        b.classList.add("active");
+        State.boardSize = parseInt(b.dataset.size);  // 立即更新
+        renderStatusTag();
     });
 });
 document.querySelectorAll("#colorControl button").forEach((b) => {
