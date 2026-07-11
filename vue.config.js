@@ -82,7 +82,7 @@ module.exports = {
     workboxPluginMode: 'GenerateSW',
     workboxOptions: {
       importWorkboxFrom: 'local',
-      skipWaiting: true,
+      skipWaiting: false,
       clientsClaim: false,
       offlineGoogleAnalytics: true,
       cleanupOutdatedCaches: true,

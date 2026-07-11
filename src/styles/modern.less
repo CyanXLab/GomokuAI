@@ -371,10 +371,16 @@ canvas, .board, .board * { transition: none !important; }
 /* ===== Chart (v-chart/F2) ===== */
 .v-chart { background: transparent !important; }
 .v-chart canvas { background: transparent !important; }
+.chart-container { background: transparent !important; }
+.chart-group .weui-cells { background: var(--color-bg-card) !important; }
 /* Dark mode: invert chart canvas so white bg becomes dark, text becomes light */
-[data-theme='dark'] .v-chart canvas {
-  filter: invert(0.88) hue-rotate(180deg) brightness(0.95);
+[data-theme='dark'] .v-chart canvas,
+[data-theme='dark'] .chart-container canvas {
+  filter: invert(0.92) hue-rotate(180deg) brightness(0.9) contrast(0.95);
+  background: transparent !important;
 }
+/* Light mode: keep chart readable */
+.v-chart canvas { background: transparent !important; }
 
 /* ===== Load-more / Scroller ===== */
 .load-more { background: transparent !important; }

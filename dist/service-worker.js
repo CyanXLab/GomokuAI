@@ -15,12 +15,16 @@ importScripts("/workbox-v4.3.1/workbox-sw.js");
 workbox.setConfig({modulePathPrefix: "/workbox-v4.3.1"});
 
 importScripts(
-  "/precache-manifest.429ab65a80cc6c906f6168a48b16c6ad.js"
+  "/precache-manifest.52cda2a77bea07ee6f5b71e41c1ddb8f.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "gomoku-ai"});
 
-workbox.core.skipWaiting();
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
 
 /**
  * The workboxSW.precacheAndRoute() method efficiently caches and responds to

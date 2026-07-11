@@ -249,8 +249,8 @@
           :show-counter="false" :rows="1" autosize></x-textarea>
       </group>
 
-      <group :title="$t('game.evalChart')">
-        <div :style="{ width: chartWidth + 'px', height: chartWidth * 0.6 + 'px' }">
+      <group :title="$t('game.evalChart')" class="chart-group">
+        <div class="chart-container" :style="{ width: chartWidth + 'px', height: chartWidth * 0.6 + 'px' }">
           <v-chart ref="chart" :data="evalData" :width="chartWidth" :height="chartWidth * 0.6">
             <v-scale ref="chartx" x :tick-interval="2" />
             <v-scale y alias="eval" :tick-count="5" />

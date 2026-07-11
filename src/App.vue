@@ -157,51 +157,12 @@ export default {
 
     const loadEngine = (loadFullEngine) => {
       _this.initEngine(loadFullEngine).catch((err) => {
-        _this.$vux.alert.show_i18n({
-          title: _this.$t('game.engineLoadingError'),
-          content: err.toString(),
-        })
+        console.error('Engine loading error:', err)
       })
     }
 
-    // 注册 Service Worker (带超时兜底:若 3 秒内未 ready,直接加载引擎)
-    let engineLoaded = false
-    const ensureEngineLoaded = (loadFullEngine) => {
-      if (engineLoaded) return
-      engineLoaded = true
-      loadEngine(loadFullEngine)
-    }
-
-    if ('serviceWorker' in navigator) {
-      let swTimeout = setTimeout(() => {
-        console.warn('Service Worker ready timeout, loading engine directly...')
-        ensureEngineLoaded(true)
-      }, 3000)
-
-      register(`${process.env.BASE_URL}service-worker.js`, {
-        ready() {
-          clearTimeout(swTimeout)
-          console.log('App is being served from cache by a service worker.')
-          ensureEngineLoaded(true)
-        },
-        updated() {
-          // 静默更新,不弹窗打扰用户
-          console.log('New content available, will reload on next visit.')
-        },
-        error(error) {
-          clearTimeout(swTimeout)
-          console.error('Service Worker registration failed:', error)
-          ensureEngineLoaded(true)
-        }
-      })
-
-      // 禁用安装提示弹窗,不打扰用户
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-      });
-    } else {
-      ensureEngineLoaded(true)
-    }
+    // 直接加载引擎,不注册 Service Worker (SW 导致弹窗/白屏问题)
+    loadEngine(true)
   },
 }
 </script>
